@@ -1,2 +1,2 @@
 baseurl: /blog
-markdown: markdown
+markdown: rdiscount
