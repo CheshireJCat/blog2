@@ -3,7 +3,7 @@ layout: default
 title:  "my first blog"
 categories: daisy
 ---
-#First Daisy#
+# First Daisy
 
 * This is my first daisy in 2016. 
 
