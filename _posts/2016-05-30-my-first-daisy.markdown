@@ -11,11 +11,11 @@ categories: daisy
 
 &nbsp;&nbsp;&nbsp;&nbsp;Apart form working, the rest time is filled width checking  [Weibo](http://weibo.com/u/3130185225), Q-zone, chatting in QQ width some net friends who play a game named JianXiaQingYuan3 ,surfing on the [bilibili](http://www.bilibili.com) . Not only that, everyday when I go to bed ,it is almost 1am.  
 
-###**So horrible !**###  
+### **So horrible !**  
 
-###**So horrible !**###  
+### **So horrible !** 
 
-###**So horrible !**###  
+### **So horrible !**  
 
 
 &nbsp;&nbsp;&nbsp;&nbsp;In order to correct my lifestyle, I decide to write daisy to warn myself that how I do nothing and waste time.  
