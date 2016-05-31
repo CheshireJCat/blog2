@@ -19,7 +19,7 @@ title: 博客
 <ul class="sidebar">
 	<li><a class="sidebar-btn" href="javascript:;" data-category="all">all</a></li>
 	{% for category in site.categories %}
-	        {% for post in category.first %}<li><a class="sidebar-btn" href="javascript:;" data-category="{{category.first}}">{{category.first}}</a></li>
+	        {% for post in category.first %}<li><a class="sidebar-btn" href="javascript:;" data-category="{{category.first}}">{{category.first}}({{category.last.size}})</a></li>
 	        {% endfor %}
 	{% endfor %}
 </ul>
