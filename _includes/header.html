@@ -1,21 +1,13 @@
-<header class="site-header">
+<nav>
 
-  <div class="wrapper">
+  <div class="nav-wrapper container">
 
-    <a class="site-title" href="{{ site.baseurl }}/">{{ site.title }}</a>
-
-    <nav class="site-nav">
-      <a href="#" class="menu-icon"></a>
-
-      <div class="trigger">
-        {% for my_page in site.pages %}
-          {% if my_page.title %}
-          <a class="page-link" href="{{ my_page.url | prepend: site.baseurl }}">{{ my_page.title }}</a>
-          {% endif %}
-        {% endfor %}
-      </div>
-    </nav>
-
+    <a class="brand-logo" href="/">{{ site.title }}</a>
+    <ul id="nav-mobile" class="hide-on-med-and-down right">
+      <li><a href="{{site.baseurl}}/">博客</a></li>
+      <li><a href="/music">音乐</a></li>
+    </ul>
+    
   </div>
 
-</header>
+ </nav>

@@ -1,12 +1,43 @@
 ---
 layout: default
-title: 我的Blog
+title: 博客
 ---
 <h2>{{ page.title }}</h2>
-<p>最新文章</p>
-<ul>
-	<a href="/">首页</a>
-　　{% for post in site.posts %}
-　　　　<li>{{ post.date | date_to_string }} <a href="/blog{{ post.url }}">{{ post.title }}</a></li>
-　　{% endfor %}
+<div class="row">
+	<ul class="col s12 m10 section">
+	　　{% for post in site.posts %}
+	　　　　<li class="card blog-item" data-category="{{post.category}}">
+				<div class="card-content">
+					<div class="card-title"><a href="/blog{{ post.url }}">{{ post.title }}</a></div>
+				  	<p class="excerpt">{{ post.excerpt | remove: '<p>' | remove: '</p>' }}</p>
+					<p>{{ post.date | date: "%Y年%m月%d日" }}</p>
+				</div>
+			</li>
+	　　{% endfor %}
+	</ul>
+</div>
+<ul class="sidebar">
+	<li><a class="sidebar-btn" href="javascript:;" data-category="all">all</a></li>
+	{% for category in site.categories %}
+	        {% for post in category.first %}<li><a class="sidebar-btn" href="javascript:;" data-category="{{category.first}}">{{category.first}}</a></li>
+	        {% endfor %}
+	{% endfor %}
 </ul>
+<script type="text/javascript">
+	document.querySelectorAll('.sidebar-btn').forEach(function(item){
+		item.onclick = function(){
+			if(item.getAttribute('data-category')!=='all'){
+				document.querySelectorAll('.blog-item').forEach(function(blog){
+					if(blog.getAttribute('data-category')!==item.getAttribute('data-category')){
+						blog.classList.add('hide');
+					}else{
+						blog.classList.remove('hide');
+					}
+				});
+			}else{
+				document.querySelectorAll('.blog-item').forEach(function(blog){blog.classList.remove('hide');})
+			}
+		};
+	});
+</script>
+

@@ -91,20 +91,20 @@ h1, h2, h3, h4, h5, h6 {
  * Links
  */
 a {
-    color: $brand-color;
+    color: $mc;
     text-decoration: none;
 
     &:visited {
-        color: darken($brand-color, 15%);
+        color: $mc;
     }
 
     &:hover {
-        color: $text-color;
+        color: $ah-color;
         text-decoration: underline;
     }
+
+ &:hover{color:$ah-color;text-decoration:none;}
 }
-
-
 
 /**
  * Blockquotes

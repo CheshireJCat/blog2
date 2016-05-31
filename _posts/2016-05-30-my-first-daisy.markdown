@@ -1,29 +1,23 @@
 ---
-layout: default
-title:  "my first blog"
-categories: daisy
+layout: blog
+title:  "My First Blog"
+category: daisy
+excerpt: my first daisy in 2016. 
+tags: daisy
 ---
-# First Daisy
 
 * This is my first daisy in 2016. 
 
-&nbsp;&nbsp;&nbsp;&nbsp;In recently , every day is a **mystery**.  
+In recently , every day is a **mystery**.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;Apart form working, the rest time is filled width checking  [Weibo](http://weibo.com/u/3130185225), Q-zone, chatting in QQ width some net friends who play a game named JianXiaQingYuan3 ,surfing on the [bilibili](http://www.bilibili.com) . Not only that, everyday when I go to bed ,it is almost 1am.  
+Apart form working, the rest time is filled width checking  [Weibo](http://weibo.com/u/3130185225), Q-zone, chatting in QQ width some net friends who play a game named JianXiaQingYuan3 ,surfing on the [bilibili](http://www.bilibili.com) . Not only that, everyday when I go to bed ,it is almost 1am.So horrible ! So horrible ! So horrible !  
 
-### **So horrible !**  
+In order to correct my lifestyle, I decide to write daisy to warn myself that how I do nothing and waste time.  
 
-### **So horrible !** 
+On the other hand, I found my English is poor and poor. Most of vocabulary and grammar is backen to the English Teacher.I hope that I can pick up my English by this way of writing daisy in English .  
 
-### **So horrible !**  
+As for others, I begin to use github , but now, there is nothing to push, so just begin width blog ,maybe it is not so bad. 
 
-
-&nbsp;&nbsp;&nbsp;&nbsp;In order to correct my lifestyle, I decide to write daisy to warn myself that how I do nothing and waste time.  
-
-&nbsp;&nbsp;&nbsp;&nbsp;On the other hand, I found my English is poor and poor. Most of vocabulary and grammar is backen to the English Teacher.I hope that I can pick up my English by this way of writing daisy in English .  
-
-&nbsp;&nbsp;&nbsp;&nbsp;As for others, I begin to use github , but now, there is nothing to push, so just begin width blog ,maybe it is not so bad. 
-
-
->Come On! Guy!
+Come On! Guy!
+(｡•ˇ‸ˇ•｡)
 
