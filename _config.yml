@@ -16,3 +16,4 @@ github_username:  CheshireJCat
 # Build settings
 markdown: kramdown
 port: 5001
+highlighter: pygments
