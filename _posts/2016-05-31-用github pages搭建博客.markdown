@@ -200,7 +200,8 @@ tags: daisy
 
  
 然后再下面输入博客的内容,然后用git提交，就可以了  
-[markdown语法](http://www.bluesdream.com/blog/markdown-cheatsheet-syntax-manual.html)  
+[markdown语法](http://www.bluesdream.com/blog/markdown-cheatsheet-syntax-manual.html) 
+[markdown语法详解](http://www.markdown.cn/)
 
 #### 域名绑定  
 ---  
