@@ -31,7 +31,7 @@ layout: blog
 title:  BolgTitle
 category: BolgCategory
 excerpt: BolgExcerpt
-tags: git jekyll 配置 blog 搭建
+tags: BolgTags
 ---
 
 
