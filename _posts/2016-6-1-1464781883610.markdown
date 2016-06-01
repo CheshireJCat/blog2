@@ -51,10 +51,9 @@ if(fs.exists(name,function(res){
 
 `node nb.js`  
 
-===  
+---  
 
->转载请注明出处  
 
->###### lmaomaoz  
+转载请注明出处   
 
->[{{ site.baseurl }}{{page.url}}]({{ site.baseurl }}{{page.url}})
+lmaomaoz <{{ site.url }}/blog{{page.url}}>

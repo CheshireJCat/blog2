@@ -252,10 +252,9 @@ tags: daisy
 * jekyll详细配置适用文档[http://jekyll.bootcss.com/](http://jekyll.bootcss.com/)  
 * 博客的评论可以用 国外的 disqus，或者国内的 友言或者多说等其他评论系统 简单配置即可  
 
-转载请注明出处  
+转载请注明出处   
 
-### lmaomaoz  
-[{{ site.baseurl }}{{page.url}}]({{ site.baseurl }}{{page.url}})
+lmaomaoz <{{ site.url }}/blog{{page.url}}>
 
 ---  
 ![rem]({{ site.baseurl }}/sources/images/20160531/1.jpg)  

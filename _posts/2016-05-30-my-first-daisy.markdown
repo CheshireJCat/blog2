@@ -19,5 +19,5 @@ On the other hand, I found my English is poor and poor. Most of vocabulary and g
 As for others, I begin to use github , but now, there is nothing to push, so just begin width blog ,maybe it is not so bad. 
 
 Come On! Guy!
-(｡•ˇ‸ˇ•｡)
+(｡•ˇ‸ˇ•｡) 
 

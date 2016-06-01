@@ -16,10 +16,11 @@ category: BolgCategory
 excerpt: BolgExcerpt
 tags: git jekyll 配置 blog 搭建
 ---
+---  
 
->转载请注明出处  
->#### lmaomaoz  
->[{{ site.baseurl }}{{page.url}}]({{ site.baseurl }}{{page.url}})
+转载请注明出处   
+
+lmaomaoz <{{ site.url }}/blog{{page.url}}>
 `;
 if(fs.exists(name,function(res){
 	if(!res){
