@@ -6,13 +6,13 @@ excerpt: 一些胡思乱想。。
 tags: daisy
 ---
 ---  
-  
-最近也就这样吧、马马虎虎，变的有点懒了，感觉，借了很多书、也买了一些书，深入研究了一下angular，但是仍然没有合适的契机或者案例去练习，需要尽快抽点时间完整的写个项目去继续试水，不然过段时间又是一点感觉都没，之前的也白看了。  
+Recently as yesterday，it sames to have become lazy. I got some book by borrowing and buying. I researched the angular deeply, but still didn't have some feel to practice. It's necessary to take time off to write some code in angular.If not so, it's sure to forgot it.  
 
-买了一本《程序员的数学》，大致翻了一下，觉得很不错，首先对于 10的0次方为什么等于一这一点，解释的很不错，之前也看到几本不错的关于程序数学的书，以后有空买来看吧。还有一本《超弦理论》，时空的事情一直都是那么感兴趣，虽然也还是模模糊糊，不过，多看看之后，真希望能有机会跳跃次元什么的！  
+The 《Math of coder》 this book let me feel some interested. When I looked it casually， the answer of why 0 of the 10 party is 1 is very very convincing. I had found some book about this type of book. In the future, plan to buy them to enjoy and study.And the 《Superstring theory》（超弦理论），I am still interested in the space-time. Although my feel is also blur, I hope I can travel through time, don't you?  
 
-nodeJs依然没有起色，前端更新的确实很快，看的教程都有些落后了，很多demo，包，库总是因为版本的原因出错什么的，真是讨厌啊，不赶紧跟上也是不行的。canvas需要抓起来抓一下了，threeJs，webGL也是，需要去精通的东西好多啊。以后要用webpack，es6写代码了，加油！  
+NodeJs still had no improvement. The FE update so quickly. When I study, the code of course is also error because of edition. So hate！ No，I have to catch up with the progress. I have so much technology to master, such as canvas , threeJs , webGL ,es6 and so on. Come on!  
 
-姜同学不知道找到工作没，找到后也需要打算一下找房子的事情了，开始体验一下租房的感觉了，想想还是蛮期待的，姜同学也要加油呢！  
+I don't know that if Mr Jiang get his job. After it, we plan to rent a room somewhere. I can also exprerience the taste of renting. Looking forward to it. And Mr Jiang come on ,too!  
 
-姜少女呢，新伙伴，以后也要一起好好的呢，ly！
+As for Miss Jiang, new friend and new partner, I wish we can be deeply attached to each other, l y, umm.  
+
