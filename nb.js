@@ -26,7 +26,7 @@ if(fs.exists(name,function(res){
 	if(!res){
 		fs.writeFile(name, content, 'utf-8',function (err) {
 		    if (err) throw err;
-		    console.log("Export Account Success!");
+		    console.log(name+"Export Account Success!");
 		});
 	}else{
 		console.log(name+' has exist!')
