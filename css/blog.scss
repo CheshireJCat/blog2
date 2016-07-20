@@ -2,9 +2,14 @@
 # Only the main Sass file needs front matter (the dashes are enough)
 ---
 @charset "utf-8";
+@font-face {
+    font-family: "Courgette";
+    src: url("Courgette-Regular.ttf");
+}
 .blog-header{border-bottom: 1px solid #ddd;font-family: 微软雅黑;}
 .blog-info>span{margin-right:20px;}
-.blog-content{padding: 20px 0;}
+.blog-content{padding: 20px 0;font-family:Courgette,cursive;font-size:26px;color:#454545;}
 .blog-content p{text-indent: 2em;}
 .blog-content ul li{list-style:disc}
 .blog-content hr{margin-bottom:15px;}
+.blog-content blockquote{font-family:cursive,微软雅黑;font-size:16px;font-style:normal;}
