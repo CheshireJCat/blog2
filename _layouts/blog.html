@@ -31,11 +31,30 @@ var duoshuoQuery = {short_name:"lmaomaoz"};
 	</script>
 <!-- 多说公共JS代码 end -->
 </div>
-<!-- 字体优化 -->
-<!-- <style type="text/css">
-@font-face {
-    font-family: "Courgette";
-    src: url("/blog/css/Courgette-Regular.ttf");
-}
-.blog-content{font-family:Courgette, Arial, serif;}
-</style>  -->
+<script>
+	(function(){
+    function addFont() {
+        var style = document.createElement('style');
+        style.rel = 'stylesheet';
+        document.head.appendChild(style);
+        style.textContent = localStorage.Courgette;
+    }
+
+    try {
+        if (localStorage.Courgette) {
+            addFont();
+        } else {
+            var request = new XMLHttpRequest();
+            request.open('GET', '/blog/css/Courgette.woff.css', true);
+
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    localStorage.Courgette = request.responseText;
+                    addFont();
+                }
+            }
+            request.send();
+        }
+    } catch(ex) {}
+})();
+</script>
