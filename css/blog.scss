@@ -3,19 +3,44 @@
 ---
 @charset "utf-8";
 
-.blog-header{border-bottom: 1px solid #ddd;font-family: 微软雅黑,Arial, serif;}
-.blog-info>span{margin-right:20px;}
-.blog-content{padding: 20px 0;font-size:18px;color:#454545;}
-.blog-content p{text-indent: 2em;}
-.blog-content ul li{list-style:disc}
-.blog-content hr{margin-bottom:15px;}
-.blog-content blockquote{font-size:16px;font-style:normal;}
-.blog-content h1, 
-.blog-content h2,
-.blog-content h3,
-.blog-content h4,
-.blog-content h5,
-.blog-content h6{text-shadow: 4px 4px 1px #ccc;}
-.blog-content pre,.blog-content>code{box-shadow: 0 0 9px 0 rgb(206, 206, 222) inset;font-family:Consolas,monospace;}
-code, kbd, pre, samp{font-family:Consolas,monospace;}
+@charset "utf-8";
+
+.blog-header {
+  border-bottom: 1px solid #ddd;
+  font-family: 微软雅黑,Arial, serif;
+}
+
+.blog-info > span {
+  margin-right: 20px;
+}
+
+.blog-content {
+  padding: 20px 0;
+  font-size: 18px;
+  color: #454545;
+  p {
+    text-indent: 2em;
+  }
+  ul li {
+    list-style: disc;
+  }
+  hr {
+    margin-bottom: 15px;
+  }
+  blockquote {
+    font-size: 16px;
+    font-style: normal;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    text-shadow: 4px 4px 1px #ccc;
+  }
+  pre, > code {
+    box-shadow: 0 0 9px 0 rgb(206, 206, 222) inset;
+    font-family: Consolas,monospace;
+  }
+}
+
+code, kbd, pre, samp {
+  font-family: Consolas,monospace;
+}
 
