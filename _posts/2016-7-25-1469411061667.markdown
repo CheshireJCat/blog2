@@ -7,7 +7,7 @@ tags: 命令行 库管理 环境配置
 ---
 bower，说的简单点就是前端资源管理器，比如应用中需要用到`bootstrap`库，以前， 可能会去官网或者静态资源库等地方查看版本、然后下载。使用bower，只需要一条命令行`bower install bootstrap`,就可以自动下载，甚至可以加上`#3.0.0`，直接下载需要的版本，当然功能不止如此。  
 
-## 安装
+### 安装
  
 先查看一下版本  
 
@@ -22,7 +22,7 @@ bower -v
 npm install bower
 ```  
 
-## 准备 
+### 准备 
 
 #### 新建配置文件  
 
@@ -86,7 +86,7 @@ bower uninstall <package>
 bower prune
 ```
 
-## 缓存  
+### 缓存  
   
 #### 列出缓存  
 
@@ -114,7 +114,7 @@ bower cache clean <name>#<version> [<name>#<version> ..]
 bower install <package> --offline
 ```  
 
-## 信息查看  
+### 信息查看  
 
 #### 列出清单  
 
@@ -174,7 +174,7 @@ bower login
 //-t, --token 通过身份令牌而不是用户名和密码登录
 ```  
 
-## 可选参数  
+### 可选参数  
 
 #### force  
 
@@ -231,7 +231,7 @@ bower login
 -V，--verbose
 ```  
 
-## <package>可选项  
+### <package>可选项  
 
 #### 包名  
 
@@ -274,7 +274,7 @@ http://example.com/package.zip（内容将被解压）
 http://example.com/package.tar（内容将被解压）
 ```  
 
-## <package>可选项  
+### <package>可选项  
 
 #### 版本  
 
@@ -305,9 +305,7 @@ http://example.com/package.tar（内容将被解压）
 #<revision>
 ```
 
-#### git
-
-## 编程API  
+### 编程API  
 
 ```javascript
 var bower = require('bower');
@@ -332,9 +330,10 @@ bower.commands
 * `error` 出错  
 * `end` 运行结束
 
-## 多版本安装  
+### 多版本安装  
 
 如果需要安装多个版本，比如多个版本的jquery  
+
 ```
 # 安装jquery v1.7.0
 bower install jquery-older=juqery#1.11.1 [<options>]
