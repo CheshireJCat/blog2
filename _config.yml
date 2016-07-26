@@ -8,7 +8,7 @@
 # Site settings
 title: CheshireCat
 email: lmaomaoz@gmail.com
-description: site description
+description: 柴郡猫的个人博客
 baseurl: "/blog" 
 url: "http://lmaomaoz.com"
 github_username:  CheshireJCat
