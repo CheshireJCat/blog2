@@ -1,24 +1,50 @@
-html,body{height:100%;}
-.page-content{
-	min-height:calc(100% - 310px);margin-top: 30px;
+html,
+body {
+    height: 100%;
 }
 
-nav,footer.page-footer{
-	background-color: $mc;
-	
-}
-nav .brand-logo,nav ul a{
-	color:$brand-color;
-	&:visited{color:#fff;}
+body {
+    padding-bottom: 190px;
 }
 
-.sidebar{
-	width: 160px;position: fixed;top: 180px;margin-left: 60%;padding-left:20px;border-left:1px solid #ddd;
-	li{
-		line-height:30px;
-	}
+.page-content {
+    padding-top: 90px;
+    min-height: 100%;
+    margin-bottom: -20px;
 }
 
-.hide{
-	display:none;
+nav,
+footer.page-footer {
+    background-color: $mc;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+nav .brand-logo,
+nav ul a {
+    color: $brand-color;
+    &:visited {
+        color: #fff;
+    }
+}
+
+.sidebar {
+    width: 160px;
+    position: fixed;
+    top: 180px;
+    margin-left: 60%;
+    padding-left: 20px;
+    border-left: 1px solid #ddd;
+    li {
+        line-height: 30px;
+    }
+}
+
+.hide {
+    display: none;
 }
