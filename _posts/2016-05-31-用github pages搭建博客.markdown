@@ -160,7 +160,7 @@ cmd控制台输入 `ruby -v`测试安装
 
 `port: 5001`  
 
-重新`ekyll serve`  运行即可  
+重新`jekyll serve`  运行即可  
 
 
 测试成功后，将此站点的文件拷贝替换到之前的blog文件夹  
