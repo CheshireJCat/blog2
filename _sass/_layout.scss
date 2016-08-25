@@ -40,6 +40,7 @@ nav ul a {
     margin-left: 60%;
     padding-left: 20px;
     border-left: 1px solid #ddd;
+    background-color: #fdfdfd;
     li {
         line-height: 30px;
     }
@@ -51,6 +52,12 @@ nav ul a {
        box-shadow:0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
     }
 }
+
+.pagination li.active{
+    background-color: $mc;
+    color:$brand-color;
+}
+
 
 .hide {
     display: none;

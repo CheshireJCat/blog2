@@ -17,3 +17,8 @@ github_username:  CheshireJCat
 markdown: kramdown
 port: 5001
 highlighter: rouge
+paginate: 5
+paginate_path: "page:num"
+
+# Gems
+gems: [jekyll-paginate]

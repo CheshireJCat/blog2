@@ -5,8 +5,8 @@ title: 博客
 <h2>{{ page.title }}</h2>
 <div class="row">
 	<ul class="col s12 m10 section">
-	　　{% for post in site.posts %}
-	　　　　<li class="card blog-item" data-category="{{post.category}}">
+	　　{% for post in paginator.posts %}
+	　　　　<li class="card blog-item">
 				<div class="card-content">
 					<div class="card-title"><a href="/blog{{ post.url }}">{{ post.title }}</a></div>
 				  	<p class="excerpt">{{ post.excerpt | remove: '<p>' | remove: '</p>' }}</p>
@@ -17,10 +17,41 @@ title: 博客
 	</ul>
 </div>
 <ul class="sidebar">
-	<li><a class="sidebar-btn" href="#" data-category="all">all</a></li>
+	<li><a class="sidebar-btn" href="#" data-category="all">all({{site.posts | size}})</a></li>
 	{% for category in site.categories %}
-	        {% for post in category.first %}<li><a class="sidebar-btn" href="{{site.baseurl}}/categories/{{ category | first }}" data-category="{{category.first}}">{{category.first}}({{category.last.size}})</a></li>
+	        {% for post in category.first %}<li><a class="sidebar-btn" href="{{site.baseurl}}/categories/{{ category | first }}">{{category.first}}({{category.last.size}})</a></li>
 	        {% endfor %}
 	{% endfor %}
 </ul>
+{% if paginator.total_pages > 1 %}
+<!-- 分页代码 -->
+<div class="row">
+<ul class="pagination col s12 m10 center-align">
+{% if paginator.previous_page %}
+  <li  class="waves-effect">
+	{% if paginator.previous_page == 1 %}
+      <a href="{{site.baseurl}}/"><</a></li>
+    {% else %}
+      <a href="{{site.baseurl}}/page{{paginator.previous_page}}"><</a></li>
+    {% endif %}
+  
+{% endif %}
+{% for page in (1..paginator.total_pages) %}
+    {% if page == paginator.page %}
+      <li class="active">{{ page }}</li>
+    {% elsif page == 1 %}
+      <li><a href="{{site.baseurl}}/">{{ page }}</a></li>
+    {% else %}
+      <li><a href="{{site.baseurl}}/page{{page}}">{{ page }}</a></li>
+    {% endif %}
+{% endfor %}
+{% if paginator.next_page %}
+  <li class="waves-effect"><a href="{{site.baseurl}}/page{{paginator.next_page}}">></a></li>
+  <li class="waves-effect"><a href="{{site.baseurl}}/page{{paginator.total_pages}}/">末页</a></li>
+{% endif %} 
+  <li>第{{paginator.page}}页 / 共{{paginator.total_pages}}页</li>
+</ul>
+</div>
+{% endif %}
+
 
