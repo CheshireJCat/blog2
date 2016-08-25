@@ -5,8 +5,8 @@
     <description>柴郡猫的个人博客</description>
     <link>http://lmaomaoz.com/blog/</link>
     <atom:link href="http://lmaomaoz.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 25 Aug 2016 14:17:38 +0800</pubDate>
-    <lastBuildDate>Thu, 25 Aug 2016 14:17:38 +0800</lastBuildDate>
+    <pubDate>Thu, 25 Aug 2016 14:21:33 +0800</pubDate>
+    <lastBuildDate>Thu, 25 Aug 2016 14:21:33 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
     
       <item>
@@ -66,7 +66,7 @@ GitHub Pages是由Jekyll提供技术支持的，考 虑到安全因素，所有�
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;写作完成之后运行:&lt;/p&gt;
+&lt;p&gt;写作完成之后,先将当前分支内容保存提交到远程，然后运行：&lt;/p&gt;
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./publish-gh-pages.sh gh-pages  
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
