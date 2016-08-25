@@ -5,9 +5,101 @@
     <description>柴郡猫的个人博客</description>
     <link>http://lmaomaoz.com/blog/</link>
     <atom:link href="http://lmaomaoz.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 25 Aug 2016 13:54:59 +0800</pubDate>
-    <lastBuildDate>Thu, 25 Aug 2016 13:54:59 +0800</lastBuildDate>
+    <pubDate>Thu, 25 Aug 2016 14:17:38 +0800</pubDate>
+    <lastBuildDate>Thu, 25 Aug 2016 14:17:38 +0800</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
+    
+      <item>
+        <title>jekyll 第三方插件无法在 github Pages 使用的解决办法</title>
+        <description>&lt;p&gt;今天抽了点时间处理了一下博客的分类系统，在本地环境的时候运行的挺好，上传到github之后，却产生了404错误，分类页面的展示页面没有生成。&lt;/p&gt;
+
+&lt;p&gt;经过一番查找，发现问题是：&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;在 GitHub Pages 使用插件
+GitHub Pages是由Jekyll提供技术支持的，考 虑到安全因素，所有的 Pages 通过 –safe 选项禁用了插件功能，因此如果你的网 站部署在 Github Pages ，那么你的插件不会工作。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;不过仍然有办法发布到 GitHub Pages，你只需在本地做一些转换，并把生成好的文件上传到 Github 替代 Jekyll 就可以了。&lt;/p&gt;
+
+&lt;p&gt;也只能这么解决了，不过总不能每次都生成之后拷贝，覆盖，这样太麻烦了。&lt;/p&gt;
+
+&lt;p&gt;google一下之后，找到一个不错的解决方法，大致就是现在本地创建一个用于写作的分支，如&lt;code class=&quot;highlighter-rouge&quot;&gt;docs&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;然后删除之前&lt;code class=&quot;highlighter-rouge&quot;&gt;ph-pages&lt;/code&gt;或者&lt;code class=&quot;highlighter-rouge&quot;&gt;master&lt;/code&gt;分支的内容，再讲&lt;code class=&quot;highlighter-rouge&quot;&gt;docs&lt;/code&gt;下生成的静态文件复制到&lt;code class=&quot;highlighter-rouge&quot;&gt;网页所在分支&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;大神写了一份批处理的&lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt;，用来自动化这一流程，如下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;exe_cmd&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$# &lt;/span&gt;-lt 1 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Usage: sh &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; [ gh-pages | master ]&quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;exit
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi
+
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;branch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; -z &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$branch&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$branch&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; !&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;master&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;branch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gh-pages'&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi
+
+&lt;/span&gt;exe_cmd &lt;span class=&quot;s2&quot;&gt;&quot;jekyll build&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; ! -d &lt;span class=&quot;s1&quot;&gt;'_site'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;;&lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;not content to be published&quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;exit
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi
+
+&lt;/span&gt;exe_cmd &lt;span class=&quot;s2&quot;&gt;&quot;git checkout &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$branch&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;error_code&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$error_code&lt;/span&gt; !&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;;&lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Switch branch fail.'&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;exit
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;else
+    &lt;/span&gt;ls | grep -v _site|xargs rm -rf
+    exe_cmd &lt;span class=&quot;s2&quot;&gt;&quot;cp -r _site/* .&quot;&lt;/span&gt;
+    exe_cmd &lt;span class=&quot;s2&quot;&gt;&quot;rm -rf _site/&quot;&lt;/span&gt;
+    exe_cmd &lt;span class=&quot;s2&quot;&gt;&quot;touch .nojekyll&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;写作完成之后运行:&lt;/p&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./publish-gh-pages.sh gh-pages  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;然后提交到远程即可：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add .
+git commit -m 'new blog'
+git push --all origin
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;参考自：&lt;a href=&quot;http://www.liaohuqiu.net/cn/posts/jekyll-plugins-on-github-pages/&quot;&gt;http://www.liaohuqiu.net/cn/posts/jekyll-plugins-on-github-pages/&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;转载请注明出处&lt;/p&gt;
+
+&lt;p&gt;lmaomaoz &lt;a href=&quot;http://lmaomaoz.com/blog/config/2016/08/25/1472104723404.html&quot;&gt;http://lmaomaoz.com/blog/config/2016/08/25/1472104723404.html&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Thu, 25 Aug 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/config/2016/08/25/1472104723404.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/config/2016/08/25/1472104723404.html</guid>
+        
+        <category>git</category>
+        
+        <category>jekyll</category>
+        
+        <category>config</category>
+        
+        
+        <category>config</category>
+        
+      </item>
     
       <item>
         <title>jekyll之博客分类</title>
@@ -932,287 +1024,6 @@ I don’t know what to write, just feel that I have to work hard for my life, to
         <category>搭建</category>
         
         <category>nodejs</category>
-        
-        
-        <category>config</category>
-        
-      </item>
-    
-      <item>
-        <title>用github pages搭建博客</title>
-        <description>&lt;h4 id=&quot;github-pages&quot;&gt;github pages&lt;/h4&gt;
-&lt;hr /&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;注册一个github账号，并验证邮箱；&lt;/li&gt;
-  &lt;li&gt;创建一个repo &lt;code class=&quot;highlighter-rouge&quot;&gt;Create a new repository&lt;/code&gt;&lt;br /&gt;
-创建一级域名网站，填写 &lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io&lt;/code&gt; ,例如 &lt;code class=&quot;highlighter-rouge&quot;&gt;CheshireJCat.github.io&lt;/code&gt;&lt;br /&gt;
-创建子域名网站，填写任意想取的名字即可&lt;/li&gt;
-  &lt;li&gt;勾选&lt;code class=&quot;highlighter-rouge&quot;&gt;Initialize this repository with a README&lt;/code&gt;（可选，建议勾选）&lt;/li&gt;
-  &lt;li&gt;点击&lt;code class=&quot;highlighter-rouge&quot;&gt;Create repository&lt;/code&gt;按钮，生成repo&lt;/li&gt;
-  &lt;li&gt;进入repo页面，点击&lt;code class=&quot;highlighter-rouge&quot;&gt;Settings&lt;/code&gt;按钮进入设置&lt;/li&gt;
-  &lt;li&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;GitHub Pages&lt;/code&gt; 项目，点击&lt;code class=&quot;highlighter-rouge&quot;&gt;Launch automatic page generator&lt;/code&gt;，然后选择模板，确认即可&lt;/li&gt;
-  &lt;li&gt;在地址栏 输入 &lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io&lt;/code&gt;或者&lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io/repoName&lt;/code&gt; 即可进入创建好的网站主页&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&quot;git&quot;&gt;git管理&lt;/h4&gt;
-&lt;hr /&gt;
-&lt;p&gt;可以在web页面进行代码管理，或者下载客户端，lz比较喜欢用黑窗口&lt;/p&gt;
-
-&lt;h5 id=&quot;section&quot;&gt;1. 下载安装&lt;/h5&gt;
-&lt;p&gt;git &lt;a href=&quot;https://git-scm.com/download/&quot;&gt;https://git-scm.com/download/&lt;/a&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Windows下要使用很多Linux/Unix的工具时，需要Cygwin这样的模拟环境，Git也一样。Cygwin的安装和配置都比较复杂，就不建议你折腾了。不过，有高人已经把模拟环境和Git都打包好了，名叫msysgit，只需要下载一个单独的exe安装程序，其他什么也不用装，绝对好用。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;msysgit是Windows版的Git，从https://git-for-windows.github.io下载（网速慢的同学请移步国内镜像），按默认选项安装即可。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;安装完成后，在开始菜单里找到“Git”-&amp;gt;“Git Bash”，蹦出一个类似命令行窗口的东西，就说明Git安装成功&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;git命令行也可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;tab&lt;/code&gt;键自动补全命令&lt;/p&gt;
-
-&lt;h6 id=&quot;section-1&quot;&gt;成功后，设置全局参数&lt;/h6&gt;
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git config --global user.name &quot;Your Name&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git config --global user.email &quot;email@example.com&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;h6 id=&quot;git-1&quot;&gt;让git显示颜色&lt;/h6&gt;
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git config --global color.ui true&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;(如需更新git  &lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/git/git&lt;/code&gt;)&lt;/p&gt;
-
-&lt;p&gt;详细git教程推荐  &lt;a href=&quot;http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000&quot;&gt;廖雪峰的git教程&lt;/a&gt;&lt;/p&gt;
-
-&lt;h5 id=&quot;section-2&quot;&gt;2. 克隆远程仓库代码到本地&lt;/h5&gt;
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mkdir blog&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd blog&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/CheshireJCat/blog&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;本地Git仓库和GitHub仓库之间的传输是通过SSH加密的，需要一点设置 ：&lt;/p&gt;
-
-&lt;h5 id=&quot;ssh-key&quot;&gt;3. 创建SSH Key&lt;/h5&gt;
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-keygen -t rsa -C &quot;youremail@example.com&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;登录github，&lt;code class=&quot;highlighter-rouge&quot;&gt;点击右上角头像 &amp;gt; settings &amp;gt; SSH and GPG keys &lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;或者进入&lt;a href=&quot;https://github.com/settings/keys&quot;&gt;https://github.com/settings/keys&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;在你用户主目录里找到&lt;code class=&quot;highlighter-rouge&quot;&gt;.ssh&lt;/code&gt;目录，打开公钥&lt;code class=&quot;highlighter-rouge&quot;&gt;id_rsa.pub&lt;/code&gt;,将内容添加到Key里，就可以向git托管推送本地代码了&lt;/p&gt;
-
-&lt;h5 id=&quot;section-3&quot;&gt;4. 推送本地更新到远程仓库&lt;/h5&gt;
-
-&lt;p&gt;将工作去代码修改部分转移到暂存区&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git add .&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;将暂存区内容提交到当前分支&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git commit -m &quot;update info&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;提交到远程仓库&lt;/p&gt;
-
-&lt;p&gt;如果是&lt;code class=&quot;highlighter-rouge&quot;&gt;CheshireJCat.github.io&lt;/code&gt;  根域名&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git push origin master&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;子域名默认会将网站代码建立到 &lt;code class=&quot;highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt; 分支,提交需使用&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git push origin gh-pages&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;会提示输入验证信息（github的登录邮箱和密码）&lt;/p&gt;
-
-&lt;p&gt;常见报错处理请参考&lt;a href=&quot;http://www.open-open.com/lib/view/open1366080269265.html&quot;&gt;http://www.open-open.com/lib/view/open1366080269265.html&lt;/a&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;jekyll&quot;&gt;jekyll&lt;/h4&gt;
-&lt;hr /&gt;
-
-&lt;h6 id=&quot;rubypyhoneasyinstall-&quot;&gt;确保电脑安装了&lt;code class=&quot;highlighter-rouge&quot;&gt;ruby、pyhon、easy_install&lt;/code&gt; 并配置好了环境变量&lt;/h6&gt;
-
-&lt;p&gt;测试代码如下：&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;python -V&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;easy_install --version&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ruby -v&lt;/code&gt;&lt;/p&gt;
-
-&lt;h6 id=&quot;python&quot;&gt;安装python&lt;/h6&gt;
-
-&lt;p&gt;下载&lt;a href=&quot;https://www.python.org/downloads/&quot;&gt;https://www.python.org/downloads/&lt;/a&gt;
-安装，添加到环境变量&lt;/p&gt;
-
-&lt;h6 id=&quot;easyinstall&quot;&gt;安装easy_install&lt;/h6&gt;
-&lt;p&gt;下载&lt;a href=&quot;/blog/sources/python/ez_setup.py&quot;&gt;/blog/sources/python/ez_setup.py&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;使用python运行ez_setup.py文件&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;python ez_setup.py&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;python文件夹下面多了个scripts的目录,表示安装成功了&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;右键我的电脑--高级系统设置--高级--环境变量--系统变量--path--编辑--后面加上  ;C:\Python27\Scripts&lt;/code&gt;设置好全局变量，保存&lt;/p&gt;
-
-&lt;p&gt;cmd控制台输入 &lt;code class=&quot;highlighter-rouge&quot;&gt;easy_install --version&lt;/code&gt;测试安装&lt;/p&gt;
-
-&lt;h6 id=&quot;ruby&quot;&gt;安装ruby&lt;/h6&gt;
-&lt;p&gt;下载&lt;a href=&quot;http://rubyinstaller.org/downloads/&quot;&gt;http://rubyinstaller.org/downloads/&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;解压，双击运行，next。。。出现&lt;code class=&quot;highlighter-rouge&quot;&gt; Add Ruby executables to your PATH&lt;/code&gt;时勾选，最后将&lt;code class=&quot;highlighter-rouge&quot;&gt;C:\Ruby\bin&lt;/code&gt;添加到环境变量&lt;/p&gt;
-
-&lt;p&gt;cmd控制台输入 &lt;code class=&quot;highlighter-rouge&quot;&gt;ruby -v&lt;/code&gt;测试安装&lt;/p&gt;
-
-&lt;h6 id=&quot;pygments-&quot;&gt;安装 Pygments 语法高亮的插件&lt;/h6&gt;
-&lt;p&gt;需要安装 Python 并在网站的配置文件 _config.yml 里将 highlighter 的值设置为 pygments&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;easy_install Pygments&lt;/code&gt;&lt;/p&gt;
-
-&lt;h6 id=&quot;jekyll-1&quot;&gt;安装Jekyll&lt;/h6&gt;
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem install jekyll&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;由于墙的原因，这里一般会报错  解决办法&lt;a href=&quot;http://www.haorooms.com/post/gem_not_use&quot;&gt;解决国内gem不能用的问题&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem sources --remove https://rubygems.org/&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem sources -a https://ruby.taobao.org/&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem sources -l&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;安装之后，用命令行进入一个文件夹，新建一个站点&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll new myblog&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;进入目录&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd myblog&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;开启服务&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;默认端口为4000，如报错，可能原因为端口被占用时，修改站点根目录下面的 &lt;code class=&quot;highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;,添加&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;port: 5001&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;重新&lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;  运行即可&lt;/p&gt;
-
-&lt;p&gt;测试成功后，将此站点的文件拷贝替换到之前的blog文件夹&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    git add .  
-    git commit -m &quot;update&quot;  
-    git push origin gh-pages  
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;更新到远程仓库即可&lt;/p&gt;
-
-&lt;h4 id=&quot;section-4&quot;&gt;发表博客&lt;/h4&gt;
-&lt;hr /&gt;
-
-&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;_post&lt;/code&gt;文件夹，复制或新建一个html或者markdown文件，命名为&lt;code class=&quot;highlighter-rouge&quot;&gt;年-月-日-标题.markdown&lt;/code&gt;（如&lt;code class=&quot;highlighter-rouge&quot;&gt;2016-05-30-new-blog.markdown&lt;/code&gt;）格式&lt;/p&gt;
-
-&lt;p&gt;头部输入：&lt;/p&gt;
-
-&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;---&lt;/span&gt;
-&lt;span class=&quot;ss&quot;&gt;layout: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;default&lt;/span&gt;
-&lt;span class=&quot;ss&quot;&gt;title:  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;My First Blog&quot;&lt;/span&gt;
-&lt;span class=&quot;ss&quot;&gt;category: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;daisy&lt;/span&gt;
-&lt;span class=&quot;ss&quot;&gt;excerpt: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;daisy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2016&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt; 
-&lt;span class=&quot;nf&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;daisy&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;---&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;layout&lt;/code&gt;    表示模板文件&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;title&lt;/code&gt;     博客标题&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;category&lt;/code&gt;  博客分类&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;excerpt&lt;/code&gt;   博客摘要&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;tags&lt;/code&gt;      博客标签&lt;/p&gt;
-
-&lt;p&gt;然后再下面输入博客的内容,然后用git提交，就可以了&lt;br /&gt;
-&lt;a href=&quot;http://www.bluesdream.com/blog/markdown-cheatsheet-syntax-manual.html&quot;&gt;markdown语法&lt;/a&gt; 
-&lt;a href=&quot;http://www.markdown.cn/&quot;&gt;markdown语法详解&lt;/a&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;section-5&quot;&gt;域名绑定&lt;/h4&gt;
-&lt;hr /&gt;
-
-&lt;p&gt;以我自己的域名为例&lt;code class=&quot;highlighter-rouge&quot;&gt;lmaomaoz.com&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;在blog根目录下新建一个文件  &lt;code class=&quot;highlighter-rouge&quot;&gt;CNAME&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;在里面输入自己的顶级域名&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;lmaomaoz.com&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;然后用git提交到远程&lt;/p&gt;
-
-&lt;p&gt;在域名解析控制台解析域名，lz用的万网（和阿里云合作了）解析的&lt;/p&gt;
-
-&lt;h5 id=&quot;a&quot;&gt;添加两条A记录：&lt;/h5&gt;
-
-&lt;p&gt;记录类型是&lt;code class=&quot;highlighter-rouge&quot;&gt;A&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;主机记录是&lt;code class=&quot;highlighter-rouge&quot;&gt;@&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;解析线路&lt;code class=&quot;highlighter-rouge&quot;&gt;默认&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;记录值一个用&lt;code class=&quot;highlighter-rouge&quot;&gt;192.30.252.154&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;另一个用&lt;code class=&quot;highlighter-rouge&quot;&gt;192.30.252.153&lt;/code&gt;&lt;/p&gt;
-
-&lt;h5 id=&quot;cname&quot;&gt;添加一条CNAME记录：&lt;/h5&gt;
-
-&lt;p&gt;记录类型是&lt;code class=&quot;highlighter-rouge&quot;&gt;CNAME&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;主机记录是&lt;code class=&quot;highlighter-rouge&quot;&gt;www&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;解析线路&lt;code class=&quot;highlighter-rouge&quot;&gt;默认&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;记录值用&lt;code class=&quot;highlighter-rouge&quot;&gt;CheshireJCat.github.io&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;也就是你自己要解析的重定向的域名&lt;/p&gt;
-
-&lt;p&gt;等一段时间，等官方解析服务器记录后就可以通过域名来直接访问博客或者网站&lt;/p&gt;
-
-&lt;h4 id=&quot;section-6&quot;&gt;其他&lt;/h4&gt;
-&lt;hr /&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;域名解析也有网友推荐&lt;code class=&quot;highlighter-rouge&quot;&gt;dnspos&lt;/code&gt;,&lt;a href=&quot;https://www.dnspod.cn/&quot;&gt;https://www.dnspod.cn/&lt;/a&gt;,教程自行百度&lt;/li&gt;
-  &lt;li&gt;此方案同样适用于搭建静态网站&lt;/li&gt;
-  &lt;li&gt;jekyll详细配置适用文档&lt;a href=&quot;http://jekyll.bootcss.com/&quot;&gt;http://jekyll.bootcss.com/&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;博客的评论可以用 国外的 disqus，或者国内的 友言或者多说等其他评论系统 简单配置即可&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;转载请注明出处&lt;/p&gt;
-
-&lt;p&gt;lmaomaoz &lt;a href=&quot;http://lmaomaoz.com/blog/config/2016/05/31/%E7%94%A8github-pages%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html&quot;&gt;http://lmaomaoz.com/blog/config/2016/05/31/%E7%94%A8github-pages%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html&lt;/a&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;&lt;img src=&quot;/blog/sources/images/20160531/1.jpg&quot; alt=&quot;rem&quot; /&gt;&lt;/p&gt;
-
-</description>
-        <pubDate>Tue, 31 May 2016 00:00:00 +0800</pubDate>
-        <link>http://lmaomaoz.com/blog/config/2016/05/31/%E7%94%A8github-pages%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html</link>
-        <guid isPermaLink="true">http://lmaomaoz.com/blog/config/2016/05/31/%E7%94%A8github-pages%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html</guid>
-        
-        <category>git</category>
-        
-        <category>jekyll</category>
-        
-        <category>配置</category>
-        
-        <category>blog</category>
-        
-        <category>搭建</category>
         
         
         <category>config</category>

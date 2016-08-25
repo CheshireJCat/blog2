@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/favicon.gif">
+  <title>jekyll 第三方插件无法在 github Pages 使用的解决办法</title>
+  <meta name="description" content="...">
+  <link rel="stylesheet" type="text/css" href="/blog/lib/materialize/css/materialize.min.css">
+  <link rel="stylesheet" href="/blog/css/main.css">
+  <link rel="canonical" href="http://lmaomaoz.com/blog/config/2016/08/25/1472104723404.html">
+  <link rel="alternate" type="application/rss+xml" title="CheshireCat" href="http://lmaomaoz.com/blog/feed.xml">
+</head>
+
+
+  <body>
+
+    <nav>
+
+  <div class="nav-wrapper container">
+
+    <a class="brand-logo" href="/">CheshireCat</a>
+    <ul id="nav-mobile" class="hide-on-med-and-down right">
+      <li><a href="/blog/">博客</a></li>
+      <li><a href="/music">音乐</a></li>
+      <li><a href="/code">Code</a></li>
+      <li><a href="/lab">实验室</a></li>
+      <li><a href="/">首页</a></li>
+    </ul>
+    
+  </div>
+
+ </nav>
+
+<div class="page-content">
+    <div class="container">
+        <link rel="stylesheet" type="text/css" href="/blog/css/blog.css">
+<header class="blog-header">
+  <h3 class="blog-title">jekyll 第三方插件无法在 github Pages 使用的解决办法</h3>
+  <p class="blog-info">
+  <span class="blog-time">time: 25 Aug 2016</span>
+  <span class="blog-tags">tags: <span>git  </span><span>jekyll  </span><span>config  </span></span>
+  <span class="blog-category">category: <span><a href="/blog/categories/config">config</a></span></span>
+  </p>
+</header>
+<div class="blog-content">
+  <p>今天抽了点时间处理了一下博客的分类系统，在本地环境的时候运行的挺好，上传到github之后，却产生了404错误，分类页面的展示页面没有生成。</p>
+
+<p>经过一番查找，发现问题是：</p>
+<blockquote>
+  <p>在 GitHub Pages 使用插件
+GitHub Pages是由Jekyll提供技术支持的，考 虑到安全因素，所有的 Pages 通过 –safe 选项禁用了插件功能，因此如果你的网 站部署在 Github Pages ，那么你的插件不会工作。</p>
+</blockquote>
+
+<p>不过仍然有办法发布到 GitHub Pages，你只需在本地做一些转换，并把生成好的文件上传到 Github 替代 Jekyll 就可以了。</p>
+
+<p>也只能这么解决了，不过总不能每次都生成之后拷贝，覆盖，这样太麻烦了。</p>
+
+<p>google一下之后，找到一个不错的解决方法，大致就是现在本地创建一个用于写作的分支，如<code class="highlighter-rouge">docs</code></p>
+
+<p>然后删除之前<code class="highlighter-rouge">ph-pages</code>或者<code class="highlighter-rouge">master</code>分支的内容，再讲<code class="highlighter-rouge">docs</code>下生成的静态文件复制到<code class="highlighter-rouge">网页所在分支</code></p>
+
+<p>大神写了一份批处理的<code class="highlighter-rouge">sh</code>，用来自动化这一流程，如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="k">function </span>exe_cmd<span class="o">()</span> <span class="o">{</span>
+    <span class="nb">echo</span> <span class="nv">$1</span>
+    <span class="nb">eval</span> <span class="nv">$1</span>
+<span class="o">}</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$# </span>-lt 1 <span class="o">]</span>; <span class="k">then
+    </span><span class="nb">echo</span> <span class="s2">"Usage: sh </span><span class="nv">$0</span><span class="s2"> [ gh-pages | master ]"</span>
+    <span class="nb">exit
+</span><span class="k">fi
+
+</span><span class="nv">branch</span><span class="o">=</span><span class="nv">$1</span>
+<span class="k">if</span> <span class="o">[</span> -z <span class="s2">"</span><span class="nv">$branch</span><span class="s2">"</span> <span class="o">]</span> <span class="o">||</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$branch</span><span class="s2">"</span> !<span class="o">=</span> <span class="s2">"master"</span> <span class="o">]</span>; <span class="k">then
+    </span><span class="nv">branch</span><span class="o">=</span><span class="s1">'gh-pages'</span>
+<span class="k">fi
+
+</span>exe_cmd <span class="s2">"jekyll build"</span>
+<span class="k">if</span> <span class="o">[</span> ! -d <span class="s1">'_site'</span> <span class="o">]</span>;<span class="k">then
+    </span><span class="nb">echo</span> <span class="s2">"not content to be published"</span>
+    <span class="nb">exit
+</span><span class="k">fi
+
+</span>exe_cmd <span class="s2">"git checkout </span><span class="nv">$branch</span><span class="s2">"</span>
+<span class="nv">error_code</span><span class="o">=</span><span class="nv">$?</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$error_code</span> !<span class="o">=</span> 0 <span class="o">]</span>;<span class="k">then
+    </span><span class="nb">echo</span> <span class="s1">'Switch branch fail.'</span>
+    <span class="nb">exit
+</span><span class="k">else
+    </span>ls | grep -v _site|xargs rm -rf
+    exe_cmd <span class="s2">"cp -r _site/* ."</span>
+    exe_cmd <span class="s2">"rm -rf _site/"</span>
+    exe_cmd <span class="s2">"touch .nojekyll"</span>
+<span class="k">fi</span>
+</code></pre>
+</div>
+
+<p>写作完成之后运行:</p>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>./publish-gh-pages.sh gh-pages  
+</code></pre>
+</div>
+<p>然后提交到远程即可：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git add .
+git commit -m 'new blog'
+git push --all origin
+</code></pre>
+</div>
+
+<p>参考自：<a href="http://www.liaohuqiu.net/cn/posts/jekyll-plugins-on-github-pages/">http://www.liaohuqiu.net/cn/posts/jekyll-plugins-on-github-pages/</a></p>
+
+<hr />
+
+<p>转载请注明出处</p>
+
+<p>lmaomaoz <a href="http://lmaomaoz.com/blog/config/2016/08/25/1472104723404.html">http://lmaomaoz.com/blog/config/2016/08/25/1472104723404.html</a></p>
+
+</div>
+<div class="comment">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="/config/2016/08/25/1472104723404" data-title="jekyll 第三方插件无法在 github Pages 使用的解决办法" data-url="/config/2016/08/25/1472104723404.html"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"lmaomaoz"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</div>
+<script>
+	(function(){
+    function addFont() {
+        var style = document.createElement('style');
+        style.rel = 'stylesheet';
+        document.head.appendChild(style);
+        style.textContent = localStorage.Courgette;
+    }
+
+    try {
+        if (localStorage.Courgette) {
+            addFont();
+        } else {
+            var request = new XMLHttpRequest();
+            request.open('GET', '/blog/css/Courgette.woff.css', true);
+
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    localStorage.Courgette = request.responseText;
+                    addFont();
+                }
+            }
+            request.send();
+        }
+    } catch(ex) {}
+})();
+</script>
+
+    </div>
+</div>
+    <footer class="page-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h5 class="white-text">CheshireCat</h5>
+        <p class="grey-text text-lighten-4">柴郡猫的个人博客</p>
+      </div>
+      <div class="col l4 offset-l2 s12">
+        <h5 class="white-text">Links</h5>
+        <ul>
+        
+          <li><a class="grey-text text-lighten-3" href="https://github.com/">github:CheshireJCat</a></li>
+        
+          <li><a class="grey-text text-lighten-3" href="mailto:lmaomaoz@gmail.com">e-mail:lmaomaoz@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      © 2016 Copyright
+      <a class="grey-text text-lighten-4 right" href="http://lmaomaoz.com">lmaomaoz.com</a>
+    </div>
+  </div>
+</footer>
+
+
+  </body>
+
+</html>
