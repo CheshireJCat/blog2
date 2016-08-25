@@ -7,7 +7,7 @@ layout: default
   <p class="blog-info">
   <span class="blog-time">time: {{ page.date | date_to_string }}</span>
   <span class="blog-tags">tags: {% for tags in page.tags %}<span>{{tags}}  </span>{% endfor %}</span>
-  <span class="blog-category">category: <span>{{page.category}}</span></span>
+  <span class="blog-category">category: <span><a href="{{site.baseurl}}/categories/{{page.category}}">{{page.category}}</a></span></span>
   </p>
 </header>
 <div class="blog-content">

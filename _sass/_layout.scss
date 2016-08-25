@@ -45,6 +45,13 @@ nav ul a {
     }
 }
 
+.blog-item {
+    transition:background .3s,box-shadow .3s;
+    &:hover {
+       box-shadow:0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+    }
+}
+
 .hide {
     display: none;
 }
