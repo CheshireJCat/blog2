@@ -1,0 +1,31 @@
+.blog-header {
+  border-bottom: 1px solid #ddd;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI",Arial, serif; }
+
+.blog-info > span {
+  margin-right: 20px; }
+
+.blog-content {
+  padding: 20px 0;
+  font-size: 18px;
+  color: #454545; }
+  .blog-content p {
+    text-indent: 2em; }
+  .blog-content ul li {
+    list-style: disc; }
+  .blog-content hr {
+    margin-bottom: 15px; }
+  .blog-content blockquote {
+    font-size: 16px;
+    font-style: normal; }
+  .blog-content h1, .blog-content h2, .blog-content h3, .blog-content h4, .blog-content h5, .blog-content h6 {
+    text-shadow: 1px 1px 1px #ccc; }
+  .blog-content h1, .blog-content h2, .blog-content h3 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px; }
+  .blog-content pre, .blog-content > code {
+    font-family: Consolas,monospace; }
+
+code, kbd, pre, samp {
+  font-family: Consolas,monospace; }

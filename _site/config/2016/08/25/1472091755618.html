@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/favicon.gif">
+  <title>jekyll之博客分类</title>
+  <meta name="description" content="给博客加上分类">
+  <link rel="stylesheet" type="text/css" href="/blog/lib/materialize/css/materialize.min.css">
+  <link rel="stylesheet" href="/blog/css/main.css">
+  <link rel="canonical" href="http://lmaomaoz.com/blog/config/2016/08/25/1472091755618.html">
+  <link rel="alternate" type="application/rss+xml" title="CheshireCat" href="http://lmaomaoz.com/blog/feed.xml">
+</head>
+
+
+  <body>
+
+    <nav>
+
+  <div class="nav-wrapper container">
+
+    <a class="brand-logo" href="/">CheshireCat</a>
+    <ul id="nav-mobile" class="hide-on-med-and-down right">
+      <li><a href="/blog/">博客</a></li>
+      <li><a href="/music">音乐</a></li>
+      <li><a href="/code">Code</a></li>
+      <li><a href="/lab">实验室</a></li>
+      <li><a href="/">首页</a></li>
+    </ul>
+    
+  </div>
+
+ </nav>
+
+<div class="page-content">
+    <div class="container">
+        <link rel="stylesheet" type="text/css" href="/blog/css/blog.css">
+<header class="blog-header">
+  <h3 class="blog-title">jekyll之博客分类</h3>
+  <p class="blog-info">
+  <span class="blog-time">time: 25 Aug 2016</span>
+  <span class="blog-tags">tags: <span>配置  </span><span>blog  </span><span>搭建  </span><span>nodejs  </span></span>
+  <span class="blog-category">category: <span><a href="/blog/categories/config">config</a></span></span>
+  </p>
+</header>
+<div class="blog-content">
+  <p>博客分类这件事，之前由于忙，只是简单的作了一下处理：在首页列出分类列表，然后写了一段js，点击的时候隐藏非当前分类的文章，展示当前分类的文章。不过这也不是长久之计，当文章数量多起来的时候，效率可想而知。所以今天抽出一点时间，按正规的方式加上分类。</p>
+
+<p>下面开始实现：</p>
+
+<h4 id="category">添加category插件</h4>
+
+<p>关于jekyll的插件，可以参考官方的<a href="http://jekyll.bootcss.com/docs/plugins/">http://jekyll.bootcss.com/docs/plugins/</a>，也可以根据官方实例写自己需求的插件；</p>
+<ul>
+  <li>在根目录下新建 <code class="highlighter-rouge">_plugins</code> 文件夹</li>
+  <li>添加插件，直接复制官方的源码即可：</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>module Jekyll
+
+  class CategoryPage &lt; Page
+    def initialize(site, base, dir, category)
+      @site = site
+      @base = base
+      @dir = dir
+      @name = 'index.html'
+
+      self.process(@name)
+      self.read_yaml(File.join(base, '_layouts'), 'category_index.html')
+      self.data['category'] = category
+
+      category_title_prefix = site.config['category_title_prefix'] || ''
+      self.data['title'] = "#{category_title_prefix}#{category}"
+    end
+  end
+
+  class CategoryPageGenerator &lt; Generator
+    safe true
+
+    def generate(site)
+      if site.layouts.key? 'category_index'
+        dir = site.config['category_dir'] || 'categories'
+        site.categories.keys.each do |category|
+          site.pages &lt;&lt; CategoryPage.new(site, site.source, File.join(dir, category), category)
+        end
+      end
+    end
+  end
+
+end
+</code></pre>
+</div>
+
+<h4 id="section">列出博客列表</h4>
+
+<p>在需要方式快速跳转分类的地方列出列表</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="err">\%</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">category</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">site.categories</span><span class="w"> </span><span class="err">%</span><span class="p">}</span><span class="w">
+        </span><span class="p">{</span><span class="err">\%</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">post</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">category.first</span><span class="w"> </span><span class="err">%</span><span class="p">}</span><span class="err">&lt;li&gt;&lt;a</span><span class="w"> </span><span class="err">class=</span><span class="s2">"sidebar-btn"</span><span class="w"> </span><span class="err">href=</span><span class="s2">"\{\{site.baseurl}}/categories/\{\{ category | first }}"</span><span class="err">&gt;\</span><span class="p">{</span><span class="err">\{category.first</span><span class="p">}</span><span class="err">}(\</span><span class="p">{</span><span class="err">\{category.last.size</span><span class="p">}</span><span class="err">})&lt;/a&gt;&lt;/li&gt;</span><span class="w">
+        </span><span class="p">{</span><span class="err">\%</span><span class="w"> </span><span class="err">endfor</span><span class="w"> </span><span class="err">%</span><span class="p">}</span><span class="w">
+</span><span class="p">{</span><span class="err">\%</span><span class="w"> </span><span class="err">endfor</span><span class="w"> </span><span class="err">%</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>这里jekyll会进行编译，所以添加了<code class="highlighter-rouge">\</code>来阻止，使用的时候删掉<code class="highlighter-rouge">\</code></p>
+
+<h4 id="section-1">添加模板页面</h4>
+
+<p>在 <code class="highlighter-rouge">_layouts</code> 文件夹新建 <code class="highlighter-rouge">category_index.html</code> 文件，在其中写好模板代码：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>---
+layout: default
+---
+&lt;h2&gt;\{\{ page.title }}&lt;/h2&gt;
+&lt;div class="row"&gt;
+	&lt;ul class="col s12 m10 section"&gt;
+	　　{\% for post in site.categories.[page.category] %}
+	　　　　&lt;li class="card blog-item" data-category="\{\{post.category}}"&gt;
+				&lt;div class="card-content"&gt;
+					&lt;div class="card-title"&gt;&lt;a href="/blog\{\{ post.url }}"&gt;\{\{ post.title }}&lt;/a&gt;&lt;/div&gt;
+				  	&lt;p class="excerpt"&gt;\{\{ post.excerpt | remove: '&lt;p&gt;' | remove: '&lt;/p&gt;' }}&lt;/p&gt;
+					&lt;p&gt;\{\{ post.date | date: "%Y年%m月%d日" }}&lt;/p&gt;
+				&lt;/div&gt;
+			&lt;/li&gt;
+	　　{\% endfor %}
+	&lt;/ul&gt;
+&lt;/div&gt;
+&lt;ul class="sidebar"&gt;
+	&lt;li&gt;&lt;a class="sidebar-btn" href="\{\{site.baseurl}}" data-category="all"&gt;all&lt;/a&gt;&lt;/li&gt;
+	{\% for category in site.categories %}
+	        {\% for post in category.first %}&lt;li&gt;&lt;a class="sidebar-btn" href="\{\{site.baseurl}}/categories/\{\{ category | first }}" data-category="\{\{category.first}}"&gt;(\{\{category.last.size}})&lt;/a&gt;&lt;/li&gt;
+	        {\% endfor %}
+	{\% endfor %}
+&lt;/ul&gt;
+</code></pre>
+</div>
+
+<h4 id="jekyll-">jekyll 构建运行</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>jekyll server
+</code></pre>
+</div>
+
+<hr />
+
+<p>转载请注明出处</p>
+
+<p>lmaomaoz <a href="http://lmaomaoz.com/blog/config/2016/08/25/1472091755618.html">http://lmaomaoz.com/blog/config/2016/08/25/1472091755618.html</a></p>
+
+</div>
+<div class="comment">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="/config/2016/08/25/1472091755618" data-title="jekyll之博客分类" data-url="/config/2016/08/25/1472091755618.html"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"lmaomaoz"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</div>
+<script>
+	(function(){
+    function addFont() {
+        var style = document.createElement('style');
+        style.rel = 'stylesheet';
+        document.head.appendChild(style);
+        style.textContent = localStorage.Courgette;
+    }
+
+    try {
+        if (localStorage.Courgette) {
+            addFont();
+        } else {
+            var request = new XMLHttpRequest();
+            request.open('GET', '/blog/css/Courgette.woff.css', true);
+
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    localStorage.Courgette = request.responseText;
+                    addFont();
+                }
+            }
+            request.send();
+        }
+    } catch(ex) {}
+})();
+</script>
+
+    </div>
+</div>
+    <footer class="page-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h5 class="white-text">CheshireCat</h5>
+        <p class="grey-text text-lighten-4">柴郡猫的个人博客</p>
+      </div>
+      <div class="col l4 offset-l2 s12">
+        <h5 class="white-text">Links</h5>
+        <ul>
+        
+          <li><a class="grey-text text-lighten-3" href="https://github.com/">github:CheshireJCat</a></li>
+        
+          <li><a class="grey-text text-lighten-3" href="mailto:lmaomaoz@gmail.com">e-mail:lmaomaoz@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      © 2016 Copyright
+      <a class="grey-text text-lighten-4 right" href="http://lmaomaoz.com">lmaomaoz.com</a>
+    </div>
+  </div>
+</footer>
+
+
+  </body>
+
+</html>

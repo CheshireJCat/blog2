@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/favicon.gif">
+  <title>nodeJs快速创建新博客</title>
+  <meta name="description" content="用nodeJs的fs模块快速创建新博客">
+  <link rel="stylesheet" type="text/css" href="/blog/lib/materialize/css/materialize.min.css">
+  <link rel="stylesheet" href="/blog/css/main.css">
+  <link rel="canonical" href="http://lmaomaoz.com/blog/config/2016/06/01/1464781883610.html">
+  <link rel="alternate" type="application/rss+xml" title="CheshireCat" href="http://lmaomaoz.com/blog/feed.xml">
+</head>
+
+
+  <body>
+
+    <nav>
+
+  <div class="nav-wrapper container">
+
+    <a class="brand-logo" href="/">CheshireCat</a>
+    <ul id="nav-mobile" class="hide-on-med-and-down right">
+      <li><a href="/blog/">博客</a></li>
+      <li><a href="/music">音乐</a></li>
+      <li><a href="/code">Code</a></li>
+      <li><a href="/lab">实验室</a></li>
+      <li><a href="/">首页</a></li>
+    </ul>
+    
+  </div>
+
+ </nav>
+
+<div class="page-content">
+    <div class="container">
+        <link rel="stylesheet" type="text/css" href="/blog/css/blog.css">
+<header class="blog-header">
+  <h3 class="blog-title">nodeJs快速创建新博客</h3>
+  <p class="blog-info">
+  <span class="blog-time">time: 01 Jun 2016</span>
+  <span class="blog-tags">tags: <span>配置  </span><span>blog  </span><span>搭建  </span><span>nodejs  </span></span>
+  <span class="blog-category">category: <span><a href="/blog/categories/config">config</a></span></span>
+  </p>
+</header>
+<div class="blog-content">
+  <h4 id="nodejs">安装nodeJs</h4>
+
+<p>教程自己百度233333</p>
+
+<p>在<code class="highlighter-rouge">blog</code>文件夹下面新建一个<code class="highlighter-rouge">nb.js</code>的js文件（意思是new blog）</p>
+
+<p>输入代码：</p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code>
+<span class="s1">'use strict'</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'fs'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'path'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">date</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
+	<span class="nx">year</span> <span class="o">=</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">(),</span>
+	<span class="nx">month</span> <span class="o">=</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+	<span class="nx">day</span> <span class="o">=</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getDate</span><span class="p">(),</span>
+	<span class="nx">time</span> <span class="o">=</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getTime</span><span class="p">(),</span>
+	<span class="nx">name</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span><span class="s1">'_posts'</span><span class="p">,[</span><span class="nx">year</span><span class="p">,</span><span class="nx">month</span><span class="p">,</span><span class="nx">day</span><span class="p">,</span><span class="nx">time</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)</span><span class="o">+</span><span class="s1">'.markdown'</span><span class="p">),</span>
+	<span class="nx">content</span> <span class="o">=</span>
+<span class="err">`</span><span class="o">---</span>
+<span class="nx">layout</span><span class="err">:</span> <span class="nx">blog</span>
+<span class="nl">title</span><span class="p">:</span>  <span class="nx">BolgTitle</span>
+<span class="nl">category</span><span class="p">:</span> <span class="nx">BolgCategory</span>
+<span class="nl">excerpt</span><span class="p">:</span> <span class="nx">BolgExcerpt</span>
+<span class="nl">tags</span><span class="p">:</span> <span class="nx">BolgTags</span>
+<span class="o">---</span>
+
+
+<span class="err">`</span><span class="p">;</span>
+<span class="k">if</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">exists</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">){</span>
+	<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">){</span>
+		<span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="s1">'utf-8'</span><span class="p">,</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+		    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+		    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Export Account Success!"</span><span class="p">);</span>
+		<span class="p">});</span>
+	<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+		<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span><span class="o">+</span><span class="s1">' has exist!'</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}));</span>
+</code></pre>
+</div>
+<p>在<code class="highlighter-rouge">blog</code>目录运行</p>
+
+<p><code class="highlighter-rouge">node nb.js</code></p>
+
+<hr />
+
+<p>转载请注明出处</p>
+
+<p>lmaomaoz <a href="http://lmaomaoz.com/blog/config/2016/06/01/1464781883610.html">http://lmaomaoz.com/blog/config/2016/06/01/1464781883610.html</a></p>
+
+</div>
+<div class="comment">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="/config/2016/06/01/1464781883610" data-title="nodeJs快速创建新博客" data-url="/config/2016/06/01/1464781883610.html"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"lmaomaoz"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</div>
+<script>
+	(function(){
+    function addFont() {
+        var style = document.createElement('style');
+        style.rel = 'stylesheet';
+        document.head.appendChild(style);
+        style.textContent = localStorage.Courgette;
+    }
+
+    try {
+        if (localStorage.Courgette) {
+            addFont();
+        } else {
+            var request = new XMLHttpRequest();
+            request.open('GET', '/blog/css/Courgette.woff.css', true);
+
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    localStorage.Courgette = request.responseText;
+                    addFont();
+                }
+            }
+            request.send();
+        }
+    } catch(ex) {}
+})();
+</script>
+
+    </div>
+</div>
+    <footer class="page-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h5 class="white-text">CheshireCat</h5>
+        <p class="grey-text text-lighten-4">柴郡猫的个人博客</p>
+      </div>
+      <div class="col l4 offset-l2 s12">
+        <h5 class="white-text">Links</h5>
+        <ul>
+        
+          <li><a class="grey-text text-lighten-3" href="https://github.com/">github:CheshireJCat</a></li>
+        
+          <li><a class="grey-text text-lighten-3" href="mailto:lmaomaoz@gmail.com">e-mail:lmaomaoz@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      © 2016 Copyright
+      <a class="grey-text text-lighten-4 right" href="http://lmaomaoz.com">lmaomaoz.com</a>
+    </div>
+  </div>
+</footer>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,1223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>CheshireCat</title>
+    <description>柴郡猫的个人博客</description>
+    <link>http://lmaomaoz.com/blog/</link>
+    <atom:link href="http://lmaomaoz.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 25 Aug 2016 11:12:16 +0800</pubDate>
+    <lastBuildDate>Thu, 25 Aug 2016 11:12:16 +0800</lastBuildDate>
+    <generator>Jekyll v3.2.1</generator>
+    
+      <item>
+        <title>jekyll之博客分类</title>
+        <description>&lt;p&gt;博客分类这件事，之前由于忙，只是简单的作了一下处理：在首页列出分类列表，然后写了一段js，点击的时候隐藏非当前分类的文章，展示当前分类的文章。不过这也不是长久之计，当文章数量多起来的时候，效率可想而知。所以今天抽出一点时间，按正规的方式加上分类。&lt;/p&gt;
+
+&lt;p&gt;下面开始实现：&lt;/p&gt;
+
+&lt;h4 id=&quot;category&quot;&gt;添加category插件&lt;/h4&gt;
+
+&lt;p&gt;关于jekyll的插件，可以参考官方的&lt;a href=&quot;http://jekyll.bootcss.com/docs/plugins/&quot;&gt;http://jekyll.bootcss.com/docs/plugins/&lt;/a&gt;，也可以根据官方实例写自己需求的插件；&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;在根目录下新建 &lt;code class=&quot;highlighter-rouge&quot;&gt;_plugins&lt;/code&gt; 文件夹&lt;/li&gt;
+  &lt;li&gt;添加插件，直接复制官方的源码即可：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module Jekyll
+
+  class CategoryPage &amp;lt; Page
+    def initialize(site, base, dir, category)
+      @site = site
+      @base = base
+      @dir = dir
+      @name = 'index.html'
+
+      self.process(@name)
+      self.read_yaml(File.join(base, '_layouts'), 'category_index.html')
+      self.data['category'] = category
+
+      category_title_prefix = site.config['category_title_prefix'] || ''
+      self.data['title'] = &quot;#{category_title_prefix}#{category}&quot;
+    end
+  end
+
+  class CategoryPageGenerator &amp;lt; Generator
+    safe true
+
+    def generate(site)
+      if site.layouts.key? 'category_index'
+        dir = site.config['category_dir'] || 'categories'
+        site.categories.keys.each do |category|
+          site.pages &amp;lt;&amp;lt; CategoryPage.new(site, site.source, File.join(dir, category), category)
+        end
+      end
+    end
+  end
+
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section&quot;&gt;列出博客列表&lt;/h4&gt;
+
+&lt;p&gt;在需要方式快速跳转分类的地方列出列表&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;category&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;in&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;site.categories&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;in&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;category.first&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;li&amp;gt;&amp;lt;a&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;sidebar-btn&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;\{\{site.baseurl}}/categories/\{\{ category | first }}&quot;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;\&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\{category.first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}(\&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\{category.last.size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;})&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;endfor&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;endfor&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这里jekyll会进行编译，所以添加了&lt;code class=&quot;highlighter-rouge&quot;&gt;\&lt;/code&gt;来阻止，使用的时候删掉&lt;code class=&quot;highlighter-rouge&quot;&gt;\&lt;/code&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;section-1&quot;&gt;添加模板页面&lt;/h4&gt;
+
+&lt;p&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;_layouts&lt;/code&gt; 文件夹新建 &lt;code class=&quot;highlighter-rouge&quot;&gt;category_index.html&lt;/code&gt; 文件，在其中写好模板代码：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
+layout: default
+---
+&amp;lt;h2&amp;gt;\{\{ page.title }}&amp;lt;/h2&amp;gt;
+&amp;lt;div class=&quot;row&quot;&amp;gt;
+	&amp;lt;ul class=&quot;col s12 m10 section&quot;&amp;gt;
+	　　{\% for post in site.categories.[page.category] %}
+	　　　　&amp;lt;li class=&quot;card blog-item&quot; data-category=&quot;\{\{post.category}}&quot;&amp;gt;
+				&amp;lt;div class=&quot;card-content&quot;&amp;gt;
+					&amp;lt;div class=&quot;card-title&quot;&amp;gt;&amp;lt;a href=&quot;/blog\{\{ post.url }}&quot;&amp;gt;\{\{ post.title }}&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;
+				  	&amp;lt;p class=&quot;excerpt&quot;&amp;gt;\{\{ post.excerpt | remove: '&amp;lt;p&amp;gt;' | remove: '&amp;lt;/p&amp;gt;' }}&amp;lt;/p&amp;gt;
+					&amp;lt;p&amp;gt;\{\{ post.date | date: &quot;%Y年%m月%d日&quot; }}&amp;lt;/p&amp;gt;
+				&amp;lt;/div&amp;gt;
+			&amp;lt;/li&amp;gt;
+	　　{\% endfor %}
+	&amp;lt;/ul&amp;gt;
+&amp;lt;/div&amp;gt;
+&amp;lt;ul class=&quot;sidebar&quot;&amp;gt;
+	&amp;lt;li&amp;gt;&amp;lt;a class=&quot;sidebar-btn&quot; href=&quot;\{\{site.baseurl}}&quot; data-category=&quot;all&quot;&amp;gt;all&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
+	{\% for category in site.categories %}
+	        {\% for post in category.first %}&amp;lt;li&amp;gt;&amp;lt;a class=&quot;sidebar-btn&quot; href=&quot;\{\{site.baseurl}}/categories/\{\{ category | first }}&quot; data-category=&quot;\{\{category.first}}&quot;&amp;gt;(\{\{category.last.size}})&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
+	        {\% endfor %}
+	{\% endfor %}
+&amp;lt;/ul&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;jekyll-&quot;&gt;jekyll 构建运行&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;jekyll server
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;转载请注明出处&lt;/p&gt;
+
+&lt;p&gt;lmaomaoz &lt;a href=&quot;http://lmaomaoz.com/blog/config/2016/08/25/1472091755618.html&quot;&gt;http://lmaomaoz.com/blog/config/2016/08/25/1472091755618.html&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Thu, 25 Aug 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/config/2016/08/25/1472091755618.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/config/2016/08/25/1472091755618.html</guid>
+        
+        <category>配置</category>
+        
+        <category>blog</category>
+        
+        <category>搭建</category>
+        
+        <category>nodejs</category>
+        
+        
+        <category>config</category>
+        
+      </item>
+    
+      <item>
+        <title>After the Ending &amp; Before the Beginning</title>
+        <description>&lt;p&gt;At the week before last week, I left the last company. Compare to my friends, it seems that I was easier. Everyone who work at that company know my idea when I moved out to rent for myself. And I have finished all task at my position. I really need a big enviroment to practice and improve myself. And I thank my past leader that they can understand me really. It is indeed something rare and deserving praise. LOL…&lt;/p&gt;
+
+&lt;p&gt;After it, I take off for myself about a week. Had more than one and half years since I enter my careers. I really take congnizance of the value of time. When you concentrate on the job, day and day, week and week, so fast. The rest time is more precious. So, if anyone spend the rest time with you and willing to go anywhere on weekends. Just cherish them , your present and future. If you like or love somebody, try to spend with them. Not only your girlfriend or boyfriend, but also your parents and grandparents when they are live in world.&lt;/p&gt;
+
+&lt;p&gt;At the week I take off, I wake up at 7:00 am habitually, and get up at about 9:00 am .Then take some breakfast easily. Sometimes play games, sometimes look up technology of dry cargo, sometimes just in a daze. I buy lots of vegetables and cook some dish I want. In a afternoon, I cook two dish - Mapo Tofu and Wax Gourd Tofu. 233333 . Really funny. Buy really delicous.&lt;/p&gt;
+
+&lt;p&gt;But after some days, I feel really bored. Becanuse in Beijing, I have only several friends. Of course, they are all working. I also don’t want to anywhere in myself. Everyday, I just stay at home with myself. On the other hand, if I can’t deal with my social security before 25th of this month. It will break. Although I don’t want to develop long-term in Beijing. It’s better than that. So in this week, I make up my mind to apply for a job.&lt;/p&gt;
+
+&lt;p&gt;In fact, before I left the last office, I has been ready the projects for interview. And at the week I take off, I prepared the resume. On Tuesday, I hand in several resume through the Internet in Lagou. Such as Drops taxi、 Sina、Meituan. Without doubt, my resume was refused. I know I have no ability to work for them. I know the fact. But in this fashion, I can keep calm to study hard to improve myself.I can’t be prone to extravagant fancies. In the past, I really arrogant. Today I need to precipitate.&lt;/p&gt;
+
+&lt;p&gt;Come on, guy!&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 18 Aug 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/daisy/2016/08/18/1471505585364.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/daisy/2016/08/18/1471505585364.html</guid>
+        
+        <category>daisy</category>
+        
+        
+        <category>daisy</category>
+        
+      </item>
+    
+      <item>
+        <title>bower使用笔记</title>
+        <description>&lt;p&gt;bower，说的简单点就是前端资源管理器，比如应用中需要用到&lt;code class=&quot;highlighter-rouge&quot;&gt;bootstrap&lt;/code&gt;库，以前， 可能会去官网或者静态资源库等地方查看版本、然后下载。使用bower，只需要一条命令行&lt;code class=&quot;highlighter-rouge&quot;&gt;bower install bootstrap&lt;/code&gt;,就可以自动下载，甚至可以加上&lt;code class=&quot;highlighter-rouge&quot;&gt;#3.0.0&lt;/code&gt;，直接下载需要的版本，当然功能不止如此。&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;安装&lt;/h3&gt;
+
+&lt;p&gt;先查看一下版本&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-node&quot;&gt;bower -v  
+&amp;gt;1.7.7
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果没有安装的话&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;npm install bower
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;准备&lt;/h3&gt;
+
+&lt;h4 id=&quot;section-2&quot;&gt;新建配置文件&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower init
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-3&quot;&gt;安装需要的库&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;通过 bower.json 文件安装
+bower install
+通过在github上注册的包名安装
+bower install jquery
+GitHub短链接
+bower install desandro/masonry
+Github上的 .git
+bower install git://github.com/user/package.git
+URL
+bower install http://example.com/script.js
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-4&quot;&gt;安装时候保留依赖&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower install &amp;lt;package&amp;gt; --save  
+bower install &amp;lt;package&amp;gt; --save-dev  
+
+//两者都会将依赖信息添加到配置文件中，-dev一般多用于开发环境，比如测试
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-5&quot;&gt;更改默认安装目录&lt;/h4&gt;
+
+&lt;p&gt;bower 会把包默认安装到 &lt;code class=&quot;highlighter-rouge&quot;&gt;bower_components&lt;/code&gt;目录，如果要更改路径，新建一个&lt;code class=&quot;highlighter-rouge&quot;&gt;.bowerrc&lt;/code&gt;文件，里面内容为,现在安装之后会将库存放在在&lt;code class=&quot;highlighter-rouge&quot;&gt;lib&lt;/code&gt;文件夹&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;directory&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;lib&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-6&quot;&gt;更新库&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower update
+bower update &amp;lt;package&amp;gt;  
+  
+//如果不给出具体的库，会将所有可以更新的库更新
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-7&quot;&gt;卸载库&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower uninstall &amp;lt;package&amp;gt;  
+//会将当前库依赖的库一起卸载，若依赖的库被其他库依赖，则不会
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-8&quot;&gt;卸载本地多余的库&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower prune
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;section-9&quot;&gt;缓存&lt;/h3&gt;
+
+&lt;h4 id=&quot;section-10&quot;&gt;列出缓存&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower cache list  
+
+bower cache list vue
+vue=https://github.com/vuejs/vue.git#1.0.26
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-11&quot;&gt;清除缓存&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower cache clean
+bower cache clean &amp;lt;name&amp;gt; [&amp;lt;name&amp;gt; ...]
+bower cache clean &amp;lt;name&amp;gt;#&amp;lt;version&amp;gt; [&amp;lt;name&amp;gt;#&amp;lt;version&amp;gt; ..]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-12&quot;&gt;使用本地缓存&lt;/h4&gt;
+
+&lt;p&gt;如果别的应用安装过你现在要用到的库，可以直接从本地缓存提取安装，加速咯！&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower install &amp;lt;package&amp;gt; --offline
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;section-13&quot;&gt;信息查看&lt;/h3&gt;
+
+&lt;h4 id=&quot;section-14&quot;&gt;列出清单&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower list 
+//查看目录信息  --relative，-r
+bower list &amp;lt;package&amp;gt; -r  
+//生成简单json格式映射源  --paths，-p  
+bower list &amp;lt;package&amp;gt; -p  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-15&quot;&gt;通过包名查看包在网上的地址&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower lookup &amp;lt;name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-16&quot;&gt;查看信息&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower info &amp;lt;package&amp;gt;
+bower info &amp;lt;package&amp;gt; [&amp;lt;property&amp;gt;]
+bower info &amp;lt;package&amp;gt;#&amp;lt;version&amp;gt; [&amp;lt;property&amp;gt;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-17&quot;&gt;在浏览器打开库的主页&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower home
+bower home &amp;lt;package&amp;gt;
+bower home &amp;lt;package&amp;gt;#&amp;lt;version&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-18&quot;&gt;查看链接&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower link  
+bower link &amp;lt;name&amp;gt; [&amp;lt;local name&amp;gt;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-19&quot;&gt;搜索库&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower search &amp;lt;name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-20&quot;&gt;注册&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower register &amp;lt;name&amp;gt; &amp;lt;url&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-21&quot;&gt;登录&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bower login
+//-t, --token 通过身份令牌而不是用户名和密码登录
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;section-22&quot;&gt;可选参数&lt;/h3&gt;
+
+&lt;h4 id=&quot;force&quot;&gt;force&lt;/h4&gt;
+
+&lt;p&gt;强制重新安装已安装的包,若有冲突直接安装最新版&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-f，--force
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;json&quot;&gt;json&lt;/h4&gt;
+
+&lt;p&gt;输出json格式记录&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-j，--json
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-23&quot;&gt;日志&lt;/h4&gt;
+
+&lt;p&gt;输出日志信息，如错误，冲突，警告，行动，信息，调试&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-l，--loglevel
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-24&quot;&gt;离线&lt;/h4&gt;
+
+&lt;p&gt;离线使用本地缓存&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-o，--offline
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-25&quot;&gt;安静模式&lt;/h4&gt;
+
+&lt;p&gt;只输出重要信息&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-q，--quiet
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-26&quot;&gt;无信息模式&lt;/h4&gt;
+
+&lt;p&gt;不输出任何东西，除了错误。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-s，--silent
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-27&quot;&gt;详细信息&lt;/h4&gt;
+
+&lt;p&gt;输出详细信息&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-V，--verbose
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;package&quot;&gt;&lt;package&gt;可选项&lt;/package&gt;&lt;/h3&gt;
+
+&lt;h4 id=&quot;section-28&quot;&gt;包名&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;jquery
+normalize.css
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;git&quot;&gt;Git的端点&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;https://github.com/user/package.git
+git@github.com:user/package.git
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;可以不包含&lt;code class=&quot;highlighter-rouge&quot;&gt; .git&lt;/code&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;section-29&quot;&gt;本地文件夹&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;my/local/folder/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-30&quot;&gt;速记地址&lt;/h4&gt;
+
+&lt;p&gt;默认是github上的&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;user/package
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;url&quot;&gt;URL&lt;/h4&gt;
+
+&lt;p&gt;可以当做下载器&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://example.com/script.js 
+http://example.com/style.css 
+http://example.com/package.zip（内容将被解压）
+http://example.com/package.tar（内容将被解压）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;package-1&quot;&gt;&lt;package&gt;可选项&lt;/package&gt;&lt;/h3&gt;
+
+&lt;h4 id=&quot;section-31&quot;&gt;版本&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#1.2.3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;section-32&quot;&gt;版本范围&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;＃1.2 
+＃~1.2.3 
+＃^ 1.2.3 
+＃&amp;gt; = 1.2.3 &amp;lt;2.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;gitsha&quot;&gt;git标签、sha、分支&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#&amp;lt;tag&amp;gt;
+#&amp;lt;sha&amp;gt;
+#&amp;lt;branch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;svn-&quot;&gt;svn 版本&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#&amp;lt;revision&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;api&quot;&gt;编程API&lt;/h3&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bower&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'bower'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;bower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;commands&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;install&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'jquery'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;save&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/* custom config */&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'end'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;installed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;installed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;bower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;commands&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'jquery'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{})&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'end'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;四种事件类型：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;log&lt;/code&gt; 记录状态和进度信息&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;prompt&lt;/code&gt; 请求用户输入关键信息&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;error&lt;/code&gt; 出错&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;end&lt;/code&gt; 运行结束&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;section-33&quot;&gt;多版本安装&lt;/h3&gt;
+
+&lt;p&gt;如果需要安装多个版本，比如多个版本的jquery&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 安装jquery v1.7.0
+bower install jquery-older=juqery#1.11.1 [&amp;lt;options&amp;gt;]
+
+# 安装jquery v1.9.0
+bower install jquery-old=juqery#2.4.1 [&amp;lt;options&amp;gt;]
+
+# 安装最新版jquery
+bower install jquery [&amp;lt;options&amp;gt;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;转载请注明出处&lt;/p&gt;
+
+&lt;p&gt;lmaomaoz &lt;a href=&quot;http://lmaomaoz.com/blog/tools/2016/07/25/1469411061667.html&quot;&gt;http://lmaomaoz.com/blog/tools/2016/07/25/1469411061667.html&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 25 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/tools/2016/07/25/1469411061667.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/tools/2016/07/25/1469411061667.html</guid>
+        
+        <category>命令行</category>
+        
+        <category>库管理</category>
+        
+        <category>环境配置</category>
+        
+        
+        <category>tools</category>
+        
+      </item>
+    
+      <item>
+        <title>Some Recent Things</title>
+        <description>&lt;hr /&gt;
+&lt;p&gt;There is really too many things lately. In my company where I’m working now, my two good friends have quit here on after another. The specific reason is too cumbersome to be said.&lt;br /&gt;
+As for me, last Friday, I also submitted my resignation application. I think I need better enviroment to practice and improve my front-end vocational skills. And at the week before last, 
+I make a move from the house near the company where my company provide for the employee to the new house where I rent with my college friend who just graduated. Because when I want to jump , it’s embarrassed to continue live in the old house. When I make the move, I believe my colleagues now all know my purpose. So when I submitted my application, none of them is surprised.&lt;/p&gt;
+
+&lt;p&gt;These days I will arrange my project and put some representative codes up my personal website for the future interview. And there is some scrappy follow-up work need to deal. After this, I hope I can get a job that I can work with group that is profession FEers. I need to catch up with the new techonogy.&lt;/p&gt;
+
+&lt;p&gt;At the new house, I almost get up at about 7:00am , come back home at about 7:30pm ,then cook the dinner for myself and my roommate. Sometimes, when he work overtime, I attempt to cook some dish that I haven’t do. I really enjoy cooking. I feel I eat much more than before obviously. Just it’s really delicious. Ha-ha!!! I also have a small desire that I hope one day when I go home, there is a hearty dinner waitting for me.&lt;/p&gt;
+
+&lt;p&gt;Ok, that’s all for today!&lt;/p&gt;
+
+&lt;p&gt;Love you, my dear Miss Jiang!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;禁止转载&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        <pubDate>Wed, 20 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/daisy/2016/07/20/1468976470689.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/daisy/2016/07/20/1468976470689.html</guid>
+        
+        <category>daisy</category>
+        
+        
+        <category>daisy</category>
+        
+      </item>
+    
+      <item>
+        <title>console的用法</title>
+        <description>&lt;h5 id=&quot;consolelog&quot;&gt;console.log&lt;/h5&gt;
+
+&lt;p&gt;Console.log 是最简单输出信息到 console 窗口的方法，支持多个参数，该方法会把 这些参数组合在一起显示&lt;/p&gt;
+
+&lt;p&gt;log 方法第一个参数支持类似 C 语言 printf 字符串替换模式，Log 支持下面几种替换模式&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;%s  代替字符串&lt;/li&gt;
+  &lt;li&gt;%d  代替整数&lt;/li&gt;
+  &lt;li&gt;%f  代替浮点值&lt;/li&gt;
+  &lt;li&gt;%o  代替 Object&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;%d年%d月%d日&quot;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;，&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2014&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2014&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;年&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;月&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;日&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h5 id=&quot;consoledebuginfowarnerror&quot;&gt;console.debug，info，warn，error&lt;/h5&gt;
+
+&lt;p&gt;这 4 种方法与 log 方法使用一模一样，只是显示的图标和文字颜色不一样.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;console.info 用于输出提示性信息&lt;/li&gt;
+  &lt;li&gt;console.error用于输出错误信息&lt;/li&gt;
+  &lt;li&gt;console.warn用于输出警示信息&lt;/li&gt;
+  &lt;li&gt;console.debug用于输出调试信息&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&quot;consoleassert&quot;&gt;console.assert&lt;/h5&gt;
+
+&lt;p&gt;assert 方法类似于单元测试中的断言，当 expression 表达式为 false 的时候，输出后面的信息&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;console.assert(2==1)
+=&amp;gt; VM146:1 Assertion failed:(anonymous function) 
+
+=&amp;gt; console.assert(1==1)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h5 id=&quot;consoleclear&quot;&gt;console.clear&lt;/h5&gt;
+
+&lt;p&gt;清空console中的所有信息（chrome不支持）&lt;/p&gt;
+
+&lt;h5 id=&quot;consolefirxml&quot;&gt;console.firxml&lt;/h5&gt;
+
+&lt;p&gt;等同于log，将html元素的html代码打印出来&lt;/p&gt;
+
+&lt;h5 id=&quot;consoletrace&quot;&gt;console.trace&lt;/h5&gt;
+
+&lt;p&gt;可以查看当前函数的调用堆栈信息，即当前函数是如何调用的&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function doTask(){
+    doSubTask(1000,10000);
+}
+ 
+function doSubTask(countX,countY){
+    for(var i=0;i&amp;lt;countX;i++){
+        for(var j=0;j&amp;lt;countY;j++){} 
+    }
+    console.trace();
+}
+doTask();
+
+
+输出：
+console.trace() 
+doSubTask
+doTask 
+(anonymous function) 
+_evaluateOn 
+_evaluateAndWrap 
+evaluate 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h5 id=&quot;consolegroup&quot;&gt;console.group&lt;/h5&gt;
+
+&lt;p&gt;将输出的信息进行分组方便阅读查看&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;console.group('A');
+console.log('a');
+console.log('b');
+console.log('c');
+console.groupEnd();
+
+=&amp;gt;
+A
+  a
+  b
+  c
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h5 id=&quot;consoletimenameconsoletimeendname&quot;&gt;console.time(name)/console.timeEnd(name)&lt;/h5&gt;
+
+&lt;p&gt;创建计时器&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;console.time('test')
+var a = 0;
+for(var i = 0;i&amp;lt;100;i++){
+	a+=i;
+}
+console.log(a);
+console.timeEnd('test')
+
+=&amp;gt;
+test: 计时器开始
+4950
+test: 1.77ms
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h5 id=&quot;consoletabledata&quot;&gt;console.table(data)&lt;/h5&gt;
+
+&lt;p&gt;把data对象用表格的方式显示出来，仅支持firebug&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var a = {a:1,b:2};console.table(a)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;table style=&quot;width:100px;margin:0 auto;border:1px solid #ddd&quot;&gt;
+	&lt;thead&gt;
+		&lt;tr&gt;
+			&lt;th&gt;索引&lt;/th&gt;
+			&lt;th&gt;值&lt;/th&gt;
+		&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;a&lt;/td&gt;
+			&lt;td&gt;1&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;b&lt;/td&gt;
+			&lt;td&gt;2&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h5 id=&quot;consoledirobject&quot;&gt;console.dir(object)&lt;/h5&gt;
+
+&lt;p&gt;列出对象的所有方法,不同浏览器显示的内容不同,比如列出console对象的方法&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;console.dir(console);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;转载请注明出处&lt;/p&gt;
+
+&lt;p&gt;lmaomaoz &lt;a href=&quot;http://lmaomaoz.com/blog/javascript/2016/06/29/1467188211060.html&quot;&gt;http://lmaomaoz.com/blog/javascript/2016/06/29/1467188211060.html&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 29 Jun 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/javascript/2016/06/29/1467188211060.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/javascript/2016/06/29/1467188211060.html</guid>
+        
+        <category>javascript</category>
+        
+        <category>console</category>
+        
+        <category>调试</category>
+        
+        
+        <category>javascript</category>
+        
+      </item>
+    
+      <item>
+        <title>gulpfile通用配置</title>
+        <description>&lt;h2 id=&quot;section&quot;&gt;安装插件&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;npm install gulp-ruby-sass gulp-autoprefixer gulp-minify-css gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-clean gulp-notify gulp-rename gulp-livereload gulp-cache --save-dev&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 插件&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;  
+    &lt;span class=&quot;nx&quot;&gt;sass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-ruby-sass'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;autoprefixer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-autoprefixer'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;minifycss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-minify-css'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;jshint&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-jshint'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;uglify&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-uglify'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;imagemin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-imagemin'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;rename&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-rename'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;clean&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-clean'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;concat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-concat'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;notify&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-notify'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-cache'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;livereload&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'gulp-livereload'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// styles&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'styles'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;  
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'src/styles/*.scss'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'expanded'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;autoprefixer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'last 2 version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'safari 5'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ie 8'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ie 9'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'opera 12.1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ios 6'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'android 4'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'dist/styles'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;suffix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'.min'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;minifycss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'dist/styles'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;notify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Styles task complete'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;livereload&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// scripts&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'scripts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;  
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'src/scripts/**/*.js'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jshint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jshint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;reporter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'default'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;concat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'main.js'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'dist/scripts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;suffix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'.min'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;uglify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'dist/scripts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;notify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Scripts task complete'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;livereload&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// images&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'images'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;  
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'src/images/**/*'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;imagemin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;optimizationLevel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;progressive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;interlaced&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;})))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'dist/images'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;notify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Images task complete'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;livereload&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// clean&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'clean'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;  
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'dist/styles'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'dist/scripts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'dist/images'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;clean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// default&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'default'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'clean'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'styles'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'scripts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'images'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// watch&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'watch'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;livereload&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'src/styles/**/*.scss'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'styles'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'src/scripts/**/*.js'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'scripts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'src/images/**/*'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'images'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;转载请注明出处&lt;/p&gt;
+
+&lt;p&gt;lmaomaoz &lt;a href=&quot;http://lmaomaoz.com/blog/config/2016/06/27/1466994001633.html&quot;&gt;http://lmaomaoz.com/blog/config/2016/06/27/1466994001633.html&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 27 Jun 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/config/2016/06/27/1466994001633.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/config/2016/06/27/1466994001633.html</guid>
+        
+        <category>配置</category>
+        
+        <category>gulp</category>
+        
+        <category>前端构建工具</category>
+        
+        
+        <category>config</category>
+        
+      </item>
+    
+      <item>
+        <title>名字什么的就这样吧!</title>
+        <description>&lt;hr /&gt;
+&lt;p&gt;Recently as yesterday，it sames to have become lazy. I got some book by borrowing and buying. I researched the angular deeply, but still didn’t have some feel to practice. It’s necessary to take time off to write some code in angular.If not so, it’s sure to forgot it.&lt;/p&gt;
+
+&lt;p&gt;The 《Math of coder》 this book let me feel some interested. When I looked it casually， the answer of why 0 of the 10 party is 1 is very very convincing. I had found some book about this type of book. In the future, plan to buy them to enjoy and study.And the 《Superstring theory》（超弦理论），I am still interested in the space-time. Although my feel is also blur, I hope I can travel through time, don’t you?&lt;/p&gt;
+
+&lt;p&gt;NodeJs still had no improvement. The FE update so quickly. When I study, the code of course is also error because of edition. So hate！ No，I have to catch up with the progress. I have so much technology to master, such as canvas , threeJs , webGL ,es6 and so on. Come on!&lt;/p&gt;
+
+&lt;p&gt;I don’t know that if Mr Jiang get his job. After it, we plan to rent a room somewhere. I can also exprerience the taste of renting. Looking forward to it. And Mr Jiang come on ,too!&lt;/p&gt;
+
+&lt;p&gt;As for Miss Jiang, new friend and new partner, I wish we can be deeply attached to each other, l y, umm.&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 16 Jun 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/daisy/2016/06/16/1466074328958.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/daisy/2016/06/16/1466074328958.html</guid>
+        
+        <category>daisy</category>
+        
+        
+        <category>daisy</category>
+        
+      </item>
+    
+      <item>
+        <title>Usual Sunday</title>
+        <description>&lt;hr /&gt;
+&lt;p&gt;As usual，today I get up at about 7:30am ,with tired body and dry left eye and right eye .Not because did how busy job. All the reason is that I read the 《re0》until 2:00 am of today. It’s been so long since I was addicted to a novel. So, it’s really wonderful Admittedly. Dimension and time has irresisible magic.&lt;/p&gt;
+
+&lt;p&gt;But, today’s purport is to pick up little brother named Ziwen Jiang. In every sense, he is also an important friend. So, even though I can make a lie avoid today’s trip, I can’t do it really. I also want to keep some fiendship. If you want, and you have to pay. Time, energy and so on…&lt;/p&gt;
+
+&lt;p&gt;After meet together, we got to the place where Mr Jiang will put up in the coming days. Although I had lived in Beijing more than one year, I was also astounded at the scene —– about twenty people live in a room. The natual result is sharp smell. Yes, very sharp. In my eyes, this friend has nice environment at home. I don’t know if he can stand this. At next second, the answer was no, but he also acceptted this hard spot. That was not to matter. Just lived here for the occasion. We will rent a comfortable room in future.&lt;/p&gt;
+
+&lt;p&gt;Then we walked around for some time, help him shopped some daily supplies. At last, left my IC card for him and handled a new card to came back to my house.&lt;br /&gt;
+I don’t know what to write, just feel that I have to work hard for my life, too.&lt;/p&gt;
+
+&lt;p&gt;In the end, Long live Rem.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 05 Jun 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/daisy/2016/06/05/1465126881845.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/daisy/2016/06/05/1465126881845.html</guid>
+        
+        <category>daisy</category>
+        
+        
+        <category>daisy</category>
+        
+      </item>
+    
+      <item>
+        <title>nodeJs快速创建新博客</title>
+        <description>&lt;h4 id=&quot;nodejs&quot;&gt;安装nodeJs&lt;/h4&gt;
+
+&lt;p&gt;教程自己百度233333&lt;/p&gt;
+
+&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;blog&lt;/code&gt;文件夹下面新建一个&lt;code class=&quot;highlighter-rouge&quot;&gt;nb.js&lt;/code&gt;的js文件（意思是new blog）&lt;/p&gt;
+
+&lt;p&gt;输入代码：&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;s1&quot;&gt;'use strict'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'fs'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'path'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;date&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
+	&lt;span class=&quot;nx&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getFullYear&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
+	&lt;span class=&quot;nx&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getMonth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+	&lt;span class=&quot;nx&quot;&gt;day&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
+	&lt;span class=&quot;nx&quot;&gt;time&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
+	&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;__dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'_posts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'-'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'.markdown'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+	&lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;blog&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;  &lt;span class=&quot;nx&quot;&gt;BolgTitle&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;category&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;BolgCategory&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;excerpt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;BolgExcerpt&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;BolgTags&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;---&lt;/span&gt;
+
+
+&lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exists&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+		&lt;span class=&quot;nx&quot;&gt;fs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;writeFile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'utf-8'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+		    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Export Account Success!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;' has exist!'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}));&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;blog&lt;/code&gt;目录运行&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;node nb.js&lt;/code&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;转载请注明出处&lt;/p&gt;
+
+&lt;p&gt;lmaomaoz &lt;a href=&quot;http://lmaomaoz.com/blog/config/2016/06/01/1464781883610.html&quot;&gt;http://lmaomaoz.com/blog/config/2016/06/01/1464781883610.html&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 01 Jun 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/config/2016/06/01/1464781883610.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/config/2016/06/01/1464781883610.html</guid>
+        
+        <category>配置</category>
+        
+        <category>blog</category>
+        
+        <category>搭建</category>
+        
+        <category>nodejs</category>
+        
+        
+        <category>config</category>
+        
+      </item>
+    
+      <item>
+        <title>用github pages搭建博客</title>
+        <description>&lt;h4 id=&quot;github-pages&quot;&gt;github pages&lt;/h4&gt;
+&lt;hr /&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;注册一个github账号，并验证邮箱；&lt;/li&gt;
+  &lt;li&gt;创建一个repo &lt;code class=&quot;highlighter-rouge&quot;&gt;Create a new repository&lt;/code&gt;&lt;br /&gt;
+创建一级域名网站，填写 &lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io&lt;/code&gt; ,例如 &lt;code class=&quot;highlighter-rouge&quot;&gt;CheshireJCat.github.io&lt;/code&gt;&lt;br /&gt;
+创建子域名网站，填写任意想取的名字即可&lt;/li&gt;
+  &lt;li&gt;勾选&lt;code class=&quot;highlighter-rouge&quot;&gt;Initialize this repository with a README&lt;/code&gt;（可选，建议勾选）&lt;/li&gt;
+  &lt;li&gt;点击&lt;code class=&quot;highlighter-rouge&quot;&gt;Create repository&lt;/code&gt;按钮，生成repo&lt;/li&gt;
+  &lt;li&gt;进入repo页面，点击&lt;code class=&quot;highlighter-rouge&quot;&gt;Settings&lt;/code&gt;按钮进入设置&lt;/li&gt;
+  &lt;li&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;GitHub Pages&lt;/code&gt; 项目，点击&lt;code class=&quot;highlighter-rouge&quot;&gt;Launch automatic page generator&lt;/code&gt;，然后选择模板，确认即可&lt;/li&gt;
+  &lt;li&gt;在地址栏 输入 &lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io&lt;/code&gt;或者&lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io/repoName&lt;/code&gt; 即可进入创建好的网站主页&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;git&quot;&gt;git管理&lt;/h4&gt;
+&lt;hr /&gt;
+&lt;p&gt;可以在web页面进行代码管理，或者下载客户端，lz比较喜欢用黑窗口&lt;/p&gt;
+
+&lt;h5 id=&quot;section&quot;&gt;1. 下载安装&lt;/h5&gt;
+&lt;p&gt;git &lt;a href=&quot;https://git-scm.com/download/&quot;&gt;https://git-scm.com/download/&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Windows下要使用很多Linux/Unix的工具时，需要Cygwin这样的模拟环境，Git也一样。Cygwin的安装和配置都比较复杂，就不建议你折腾了。不过，有高人已经把模拟环境和Git都打包好了，名叫msysgit，只需要下载一个单独的exe安装程序，其他什么也不用装，绝对好用。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;msysgit是Windows版的Git，从https://git-for-windows.github.io下载（网速慢的同学请移步国内镜像），按默认选项安装即可。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;安装完成后，在开始菜单里找到“Git”-&amp;gt;“Git Bash”，蹦出一个类似命令行窗口的东西，就说明Git安装成功&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;git命令行也可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;tab&lt;/code&gt;键自动补全命令&lt;/p&gt;
+
+&lt;h6 id=&quot;section-1&quot;&gt;成功后，设置全局参数&lt;/h6&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git config --global user.name &quot;Your Name&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git config --global user.email &quot;email@example.com&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;h6 id=&quot;git-1&quot;&gt;让git显示颜色&lt;/h6&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git config --global color.ui true&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;(如需更新git  &lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/git/git&lt;/code&gt;)&lt;/p&gt;
+
+&lt;p&gt;详细git教程推荐  &lt;a href=&quot;http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000&quot;&gt;廖雪峰的git教程&lt;/a&gt;&lt;/p&gt;
+
+&lt;h5 id=&quot;section-2&quot;&gt;2. 克隆远程仓库代码到本地&lt;/h5&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mkdir blog&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd blog&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/CheshireJCat/blog&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;本地Git仓库和GitHub仓库之间的传输是通过SSH加密的，需要一点设置 ：&lt;/p&gt;
+
+&lt;h5 id=&quot;ssh-key&quot;&gt;3. 创建SSH Key&lt;/h5&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-keygen -t rsa -C &quot;youremail@example.com&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;登录github，&lt;code class=&quot;highlighter-rouge&quot;&gt;点击右上角头像 &amp;gt; settings &amp;gt; SSH and GPG keys &lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;或者进入&lt;a href=&quot;https://github.com/settings/keys&quot;&gt;https://github.com/settings/keys&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;在你用户主目录里找到&lt;code class=&quot;highlighter-rouge&quot;&gt;.ssh&lt;/code&gt;目录，打开公钥&lt;code class=&quot;highlighter-rouge&quot;&gt;id_rsa.pub&lt;/code&gt;,将内容添加到Key里，就可以向git托管推送本地代码了&lt;/p&gt;
+
+&lt;h5 id=&quot;section-3&quot;&gt;4. 推送本地更新到远程仓库&lt;/h5&gt;
+
+&lt;p&gt;将工作去代码修改部分转移到暂存区&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git add .&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;将暂存区内容提交到当前分支&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git commit -m &quot;update info&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;提交到远程仓库&lt;/p&gt;
+
+&lt;p&gt;如果是&lt;code class=&quot;highlighter-rouge&quot;&gt;CheshireJCat.github.io&lt;/code&gt;  根域名&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git push origin master&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;子域名默认会将网站代码建立到 &lt;code class=&quot;highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt; 分支,提交需使用&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git push origin gh-pages&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;会提示输入验证信息（github的登录邮箱和密码）&lt;/p&gt;
+
+&lt;p&gt;常见报错处理请参考&lt;a href=&quot;http://www.open-open.com/lib/view/open1366080269265.html&quot;&gt;http://www.open-open.com/lib/view/open1366080269265.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;jekyll&quot;&gt;jekyll&lt;/h4&gt;
+&lt;hr /&gt;
+
+&lt;h6 id=&quot;rubypyhoneasyinstall-&quot;&gt;确保电脑安装了&lt;code class=&quot;highlighter-rouge&quot;&gt;ruby、pyhon、easy_install&lt;/code&gt; 并配置好了环境变量&lt;/h6&gt;
+
+&lt;p&gt;测试代码如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;python -V&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;easy_install --version&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ruby -v&lt;/code&gt;&lt;/p&gt;
+
+&lt;h6 id=&quot;python&quot;&gt;安装python&lt;/h6&gt;
+
+&lt;p&gt;下载&lt;a href=&quot;https://www.python.org/downloads/&quot;&gt;https://www.python.org/downloads/&lt;/a&gt;
+安装，添加到环境变量&lt;/p&gt;
+
+&lt;h6 id=&quot;easyinstall&quot;&gt;安装easy_install&lt;/h6&gt;
+&lt;p&gt;下载&lt;a href=&quot;/blog/sources/python/ez_setup.py&quot;&gt;/blog/sources/python/ez_setup.py&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;使用python运行ez_setup.py文件&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;python ez_setup.py&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;python文件夹下面多了个scripts的目录,表示安装成功了&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;右键我的电脑--高级系统设置--高级--环境变量--系统变量--path--编辑--后面加上  ;C:\Python27\Scripts&lt;/code&gt;设置好全局变量，保存&lt;/p&gt;
+
+&lt;p&gt;cmd控制台输入 &lt;code class=&quot;highlighter-rouge&quot;&gt;easy_install --version&lt;/code&gt;测试安装&lt;/p&gt;
+
+&lt;h6 id=&quot;ruby&quot;&gt;安装ruby&lt;/h6&gt;
+&lt;p&gt;下载&lt;a href=&quot;http://rubyinstaller.org/downloads/&quot;&gt;http://rubyinstaller.org/downloads/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;解压，双击运行，next。。。出现&lt;code class=&quot;highlighter-rouge&quot;&gt; Add Ruby executables to your PATH&lt;/code&gt;时勾选，最后将&lt;code class=&quot;highlighter-rouge&quot;&gt;C:\Ruby\bin&lt;/code&gt;添加到环境变量&lt;/p&gt;
+
+&lt;p&gt;cmd控制台输入 &lt;code class=&quot;highlighter-rouge&quot;&gt;ruby -v&lt;/code&gt;测试安装&lt;/p&gt;
+
+&lt;h6 id=&quot;pygments-&quot;&gt;安装 Pygments 语法高亮的插件&lt;/h6&gt;
+&lt;p&gt;需要安装 Python 并在网站的配置文件 _config.yml 里将 highlighter 的值设置为 pygments&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;easy_install Pygments&lt;/code&gt;&lt;/p&gt;
+
+&lt;h6 id=&quot;jekyll-1&quot;&gt;安装Jekyll&lt;/h6&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem install jekyll&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;由于墙的原因，这里一般会报错  解决办法&lt;a href=&quot;http://www.haorooms.com/post/gem_not_use&quot;&gt;解决国内gem不能用的问题&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem sources --remove https://rubygems.org/&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem sources -a https://ruby.taobao.org/&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem sources -l&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;安装之后，用命令行进入一个文件夹，新建一个站点&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll new myblog&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;进入目录&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd myblog&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;开启服务&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;默认端口为4000，如报错，可能原因为端口被占用时，修改站点根目录下面的 &lt;code class=&quot;highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;,添加&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;port: 5001&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;重新&lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;  运行即可&lt;/p&gt;
+
+&lt;p&gt;测试成功后，将此站点的文件拷贝替换到之前的blog文件夹&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    git add .  
+    git commit -m &quot;update&quot;  
+    git push origin gh-pages  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;更新到远程仓库即可&lt;/p&gt;
+
+&lt;h4 id=&quot;section-4&quot;&gt;发表博客&lt;/h4&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;_post&lt;/code&gt;文件夹，复制或新建一个html或者markdown文件，命名为&lt;code class=&quot;highlighter-rouge&quot;&gt;年-月-日-标题.markdown&lt;/code&gt;（如&lt;code class=&quot;highlighter-rouge&quot;&gt;2016-05-30-new-blog.markdown&lt;/code&gt;）格式&lt;/p&gt;
+
+&lt;p&gt;头部输入：&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;ss&quot;&gt;layout: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;default&lt;/span&gt;
+&lt;span class=&quot;ss&quot;&gt;title:  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;My First Blog&quot;&lt;/span&gt;
+&lt;span class=&quot;ss&quot;&gt;category: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;daisy&lt;/span&gt;
+&lt;span class=&quot;ss&quot;&gt;excerpt: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;daisy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2016&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt; 
+&lt;span class=&quot;nf&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;daisy&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;---&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;layout&lt;/code&gt;    表示模板文件&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;title&lt;/code&gt;     博客标题&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;category&lt;/code&gt;  博客分类&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;excerpt&lt;/code&gt;   博客摘要&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;tags&lt;/code&gt;      博客标签&lt;/p&gt;
+
+&lt;p&gt;然后再下面输入博客的内容,然后用git提交，就可以了&lt;br /&gt;
+&lt;a href=&quot;http://www.bluesdream.com/blog/markdown-cheatsheet-syntax-manual.html&quot;&gt;markdown语法&lt;/a&gt; 
+&lt;a href=&quot;http://www.markdown.cn/&quot;&gt;markdown语法详解&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;section-5&quot;&gt;域名绑定&lt;/h4&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;以我自己的域名为例&lt;code class=&quot;highlighter-rouge&quot;&gt;lmaomaoz.com&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;在blog根目录下新建一个文件  &lt;code class=&quot;highlighter-rouge&quot;&gt;CNAME&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;在里面输入自己的顶级域名&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;lmaomaoz.com&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;然后用git提交到远程&lt;/p&gt;
+
+&lt;p&gt;在域名解析控制台解析域名，lz用的万网（和阿里云合作了）解析的&lt;/p&gt;
+
+&lt;h5 id=&quot;a&quot;&gt;添加两条A记录：&lt;/h5&gt;
+
+&lt;p&gt;记录类型是&lt;code class=&quot;highlighter-rouge&quot;&gt;A&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;主机记录是&lt;code class=&quot;highlighter-rouge&quot;&gt;@&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;解析线路&lt;code class=&quot;highlighter-rouge&quot;&gt;默认&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;记录值一个用&lt;code class=&quot;highlighter-rouge&quot;&gt;192.30.252.154&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;另一个用&lt;code class=&quot;highlighter-rouge&quot;&gt;192.30.252.153&lt;/code&gt;&lt;/p&gt;
+
+&lt;h5 id=&quot;cname&quot;&gt;添加一条CNAME记录：&lt;/h5&gt;
+
+&lt;p&gt;记录类型是&lt;code class=&quot;highlighter-rouge&quot;&gt;CNAME&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;主机记录是&lt;code class=&quot;highlighter-rouge&quot;&gt;www&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;解析线路&lt;code class=&quot;highlighter-rouge&quot;&gt;默认&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;记录值用&lt;code class=&quot;highlighter-rouge&quot;&gt;CheshireJCat.github.io&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;也就是你自己要解析的重定向的域名&lt;/p&gt;
+
+&lt;p&gt;等一段时间，等官方解析服务器记录后就可以通过域名来直接访问博客或者网站&lt;/p&gt;
+
+&lt;h4 id=&quot;section-6&quot;&gt;其他&lt;/h4&gt;
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;域名解析也有网友推荐&lt;code class=&quot;highlighter-rouge&quot;&gt;dnspos&lt;/code&gt;,&lt;a href=&quot;https://www.dnspod.cn/&quot;&gt;https://www.dnspod.cn/&lt;/a&gt;,教程自行百度&lt;/li&gt;
+  &lt;li&gt;此方案同样适用于搭建静态网站&lt;/li&gt;
+  &lt;li&gt;jekyll详细配置适用文档&lt;a href=&quot;http://jekyll.bootcss.com/&quot;&gt;http://jekyll.bootcss.com/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;博客的评论可以用 国外的 disqus，或者国内的 友言或者多说等其他评论系统 简单配置即可&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;转载请注明出处&lt;/p&gt;
+
+&lt;p&gt;lmaomaoz &lt;a href=&quot;http://lmaomaoz.com/blog/config/2016/05/31/%E7%94%A8github-pages%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html&quot;&gt;http://lmaomaoz.com/blog/config/2016/05/31/%E7%94%A8github-pages%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/sources/images/20160531/1.jpg&quot; alt=&quot;rem&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 31 May 2016 00:00:00 +0800</pubDate>
+        <link>http://lmaomaoz.com/blog/config/2016/05/31/%E7%94%A8github-pages%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html</link>
+        <guid isPermaLink="true">http://lmaomaoz.com/blog/config/2016/05/31/%E7%94%A8github-pages%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html</guid>
+        
+        <category>git</category>
+        
+        <category>jekyll</category>
+        
+        <category>配置</category>
+        
+        <category>blog</category>
+        
+        <category>搭建</category>
+        
+        
+        <category>config</category>
+        
+      </item>
+    
+  </channel>
+</rss>
